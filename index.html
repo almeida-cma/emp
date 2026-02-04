@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🚀 Portal de Empreendedorismo Tech</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 25px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(90deg, #FF6B8B, #FFA500, #00CED1, #9370DB);
+            padding: 40px 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header::before {
+            content: "✨";
+            font-size: 150px;
+            position: absolute;
+            top: -30px;
+            left: -30px;
+            opacity: 0.1;
+        }
+        
+        .header::after {
+            content: "🚀";
+            font-size: 150px;
+            position: absolute;
+            bottom: -60px;
+            right: -30px;
+            opacity: 0.1;
+        }
+        
+        h1 {
+            font-size: 3rem;
+            color: white;
+            text-shadow: 2px 2px 0 #FF6B8B;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .subtitle {
+            font-size: 1.3rem;
+            color: white;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .main-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            padding: 40px;
+        }
+        
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            transition: all 0.3s ease;
+            border: 3px solid transparent;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        }
+        
+        .section:hover {
+            transform: translateY(-10px);
+            border-color: #9370DB;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+        }
+        
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 3px dashed #FF6B8B;
+        }
+        
+        .section-icon {
+            font-size: 2.5rem;
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, #FF6B8B, #FFA500);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+        
+        .section-title {
+            font-size: 1.8rem;
+            color: #667eea;
+            font-weight: bold;
+        }
+        
+        .links-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .link-item {
+            margin-bottom: 15px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 15px;
+            border-left: 5px solid #00CED1;
+            transition: all 0.3s ease;
+        }
+        
+        .link-item:hover {
+            background: #e9ecef;
+            border-left-color: #FF6B8B;
+            transform: translateX(5px);
+        }
+        
+        .link-item a {
+            text-decoration: none;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+        
+        .link-item a:hover {
+            color: #667eea;
+        }
+        
+        .link-icon {
+            font-size: 1.3rem;
+            color: #9370DB;
+            min-width: 30px;
+        }
+        
+        .file-info {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 5px;
+            padding-left: 42px;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 12px 25px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: bold;
+            margin-top: 15px;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        .btn-icon {
+            margin-right: 8px;
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 30px;
+            background: #f8f9fa;
+            border-top: 3px solid #9370DB;
+            margin-top: 20px;
+            border-radius: 0 0 25px 25px;
+        }
+        
+        .footer-text {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 5px 12px;
+            background: #FF6B8B;
+            color: white;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin-left: 10px;
+            font-weight: bold;
+        }
+        
+        .new-badge {
+            background: #00CED1;
+        }
+        
+        .hot-badge {
+            background: #FFA500;
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            .header {
+                padding: 30px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 Portal de Empreendedorismo Tech</h1>
+            <p class="subtitle">Tudo que você precisa para começar sua jornada empreendedora</p>
+        </div>
+        
+        <div class="main-content">
+            <!-- Seção 1: Apresentação -->
+            <div class="section">
+                <div class="section-header">
+                    <div class="section-icon">🎤</div>
+                    <h2 class="section-title">1. Apresentação</h2>
+                </div>
+                <p style="margin-bottom: 20px; line-height: 1.6;">
+                    Aprenda os conceitos básicos de empreendedorismo em tecnologia, 
+                    MVP (Produto Mínimo Viável) e como transformar problemas em soluções digitais.
+                </p>
+                <ul class="links-list">
+                    <li class="link-item">
+                        <a href="Apresentacao.html" target="_blank">
+                            <span class="link-icon">📽️</span>
+                            <span>Aula Interativa Completa</span>
+                        </a>
+                        <div class="file-info">Apresentação HTML interativa com quizzes e exemplos</div>
+                    </li>
+                </ul>
+                <a href="Apresentacao.html" class="btn" target="_blank">
+                    <span class="btn-icon">▶️</span>
+                    Iniciar Apresentação
+                </a>
+            </div>
+            
+            <!-- Seção 2: Exemplos Práticos -->
+            <div class="section">
+                <div class="section-header">
+                    <div class="section-icon">💡</div>
+                    <h2 class="section-title">2. Exemplos Práticos <span class="badge new-badge">6 Exemplos</span></h2>
+                </div>
+                <p style="margin-bottom: 20px; line-height: 1.6;">
+                    Explore exemplos reais de MVPs funcionais. Cada exemplo mostra uma ideia 
+                    transformada em protótipo interativo.
+                </p>
+                <ul class="links-list">
+                    <li class="link-item">
+                        <a href="Exemplos/colormatch.html" target="_blank">
+                            <span class="link-icon">💄</span>
+                            <span>ColorMatch AR</span>
+                            <span class="badge">MVP</span>
+                        </a>
+                        <div class="file-info">Teste virtual de maquiagem em realidade aumentada</div>
+                    </li>
+                    <li class="link-item">
+                        <a href="Exemplos/smartflow.html" target="_blank">
+                            <span class="link-icon">🚦</span>
+                            <span>SmartFlow AI</span>
+                            <span class="badge">MVP</span>
+                        </a>
+                        <div class="file-info">Controle inteligente de semáforos com IA</div>
+                    </li>
+                    <li class="link-item">
+                        <a href="Exemplos/hosppredict.html" target="_blank">
+                            <span class="link-icon">🏥</span>
+                            <span>HospPredict AI</span>
+                            <span class="badge">MVP</span>
+                        </a>
+                        <div class="file-info">Previsão de tempo de internação hospitalar</div>
+                    </li>
+                    <li class="link-item">
+                        <a href="Exemplos/soundcollab.html" target="_blank">
+                            <span class="link-icon">🎵</span>
+                            <span>SoundCollab</span>
+                            <span class="badge">MVP</span>
+                        </a>
+                        <div class="file-info">Criação colaborativa de músicas online</div>
+                    </li>
+                    <li class="link-item">
+                        <a href="Exemplos/gamedesign.html" target="_blank">
+                            <span class="link-icon">🎮</span>
+                            <span>GameDesign Hub</span>
+                            <span class="badge">MVP</span>
+                        </a>
+                        <div class="file-info">Biblioteca colaborativa de assets para jogos</div>
+                    </li>
+                    <li class="link-item">
+                        <a href="Exemplos/dronedrop.html" target="_blank">
+                            <span class="link-icon">🚁</span>
+                            <span>DroneDrop</span>
+                            <span class="badge">MVP</span>
+                        </a>
+                        <div class="file-info">Sistema de entregas automatizadas por drones</div>
+                    </li>
+                </ul>
+                <a href="Exemplos/" class="btn" target="_blank">
+                    <span class="btn-icon">📁</span>
+                    Abrir Pasta de Exemplos
+                </a>
+            </div>
+            
+            <!-- Seção 3: Resumo MVPs -->
+            <div class="section">
+                <div class="section-header">
+                    <div class="section-icon">📊</div>
+                    <h2 class="section-title">3. Resumo dos MVPs</h2>
+                </div>
+                <p style="margin-bottom: 20px; line-height: 1.6;">
+                    Documento resumido explicando cada MVP, suas funcionalidades principais 
+                    e o que foi aprendido com cada exemplo.
+                </p>
+                <ul class="links-list">
+                    <li class="link-item">
+                        <a href="Exemplos/MVPs.pdf" target="_blank">
+                            <span class="link-icon">📄</span>
+                            <span>Resumo Completo dos MVPs</span>
+                            <span class="badge hot-badge">PDF</span>
+                        </a>
+                        <div class="file-info">Documento detalhado com análise de cada exemplo</div>
+                    </li>
+                </ul>
+                <a href="Exemplos/MVPs.pdf" class="btn" target="_blank">
+                    <span class="btn-icon">📥</span>
+                    Baixar Resumo
+                </a>
+            </div>
+            
+            <!-- Seção 4: Downloads -->
+            <div class="section">
+                <div class="section-header">
+                    <div class="section-icon">💾</div>
+                    <h2 class="section-title">4. Downloads</h2>
+                </div>
+                <p style="margin-bottom: 20px; line-height: 1.6;">
+                    Acesse todo o material do curso, incluindo códigos fonte, apresentações 
+                    e recursos adicionais.
+                </p>
+                <ul class="links-list">
+                    <li class="link-item">
+                        <a href="https://github.com/almeida-cma/emp" target="_blank">
+                            <span class="link-icon">📦</span>
+                            <span>Repositório Completo</span>
+                            <span class="badge">GitHub</span>
+                        </a>
+                        <div class="file-info">Todos os arquivos e códigos fonte</div>
+                    </li>
+                </ul>
+                <a href="https://github.com/almeida-cma/emp" class="btn" target="_blank">
+                    <span class="btn-icon">⭐</span>
+                    Acessar GitHub
+                </a>
+            </div>
+            
+            <!-- Seção 5: Template Modelo -->
+            <div class="section">
+                <div class="section-header">
+                    <div class="section-icon">🎨</div>
+                    <h2 class="section-title">5. Template Modelo</h2>
+                </div>
+                <p style="margin-bottom: 20px; line-height: 1.6;">
+                    Use nosso template pronto para criar seu próprio MVP rapidamente. 
+                    Estrutura básica com HTML, CSS e JavaScript.
+                </p>
+                <ul class="links-list">
+                    <li class="link-item">
+                        <a href="template.html" target="_blank">
+                            <span class="link-icon">🖼️</span>
+                            <span>Template para Seu MVP</span>
+                            <span class="badge new-badge">HTML</span>
+                        </a>
+                        <div class="file-info">Estrutura básica para começar seu projeto</div>
+                    </li>
+                </ul>
+                <a href="template.html" class="btn" target="_blank">
+                    <span class="btn-icon">🚀</span>
+                    Usar Template
+                </a>
+            </div>
+            
+            <!-- Seção 6: Ferramentas Online -->
+            <div class="section">
+                <div class="section-header">
+                    <div class="section-icon">🔧</div>
+                    <h2 class="section-title">6. Ferramentas Úteis</h2>
+                </div>
+                <p style="margin-bottom: 20px; line-height: 1.6;">
+                    Ferramentas gratuitas online para ajudar no desenvolvimento do seu projeto.
+                </p>
+                <ul class="links-list">
+                    <li class="link-item">
+                        <a href="https://www.drawio.com/" target="_blank">
+                            <span class="link-icon">📐</span>
+                            <span>Draw.io</span>
+                            <span class="badge">Online</span>
+                        </a>
+                        <div class="file-info">Crie diagramas e fluxogramas gratuitamente</div>
+                    </li>
+                </ul>
+                <a href="https://www.drawio.com/" class="btn" target="_blank">
+                    <span class="btn-icon">✏️</span>
+                    Criar Diagramas
+                </a>
+            </div>
+            
+            <!-- Seção 7: Repositório -->
+            <div class="section">
+                <div class="section-header">
+                    <div class="section-icon">🐙</div>
+                    <h2 class="section-title">7. Repositório Oficial</h2>
+                </div>
+                <p style="margin-bottom: 20px; line-height: 1.6;">
+                    Acesse o repositório oficial com todo o material atualizado, 
+                    issues, e histórico de desenvolvimento.
+                </p>
+                <ul class="links-list">
+                    <li class="link-item">
+                        <a href="https://github.com/almeida-cma/emp" target="_blank">
+                            <span class="link-icon">🔗</span>
+                            <span>GitHub - Empreendedorismo Tech</span>
+                            <span class="badge">Oficial</span>
+                        </a>
+                        <div class="file-info">Repositório principal do projeto</div>
+                    </li>
+                </ul>
+                <a href="https://github.com/almeida-cma/emp" class="btn" target="_blank">
+                    <span class="btn-icon">👨‍💻</span>
+                    Contribuir no GitHub
+                </a>
+            </div>
+            
+            <!-- Seção 8: Envio de Trabalhos -->
+            <div class="section">
+                <div class="section-header">
+                    <div class="section-icon">📝</div>
+                    <h2 class="section-title">8. Envio de Trabalhos</h2>
+                </div>
+                <p style="margin-bottom: 20px; line-height: 1.6;">
+                    Envie seu projeto ou dúvidas através do formulário online. 
+                    Faça upload de arquivos e compartilhe seu progresso.
+                </p>
+                <ul class="links-list">
+                    <li class="link-item">
+                        <a href="https://form.jotform.com/260337769744065" target="_blank">
+                            <span class="link-icon">📋</span>
+                            <span>Formulário de Envio</span>
+                            <span class="badge hot-badge">Ativo</span>
+                        </a>
+                        <div class="file-info">Envie seu projeto ou tire dúvidas</div>
+                    </li>
+                </ul>
+                <a href="https://form.jotform.com/260337769744065" class="btn" target="_blank">
+                    <span class="btn-icon">📤</span>
+                    Enviar Trabalho
+                </a>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p class="footer-text">
+                🎓 <strong>Portal de Empreendedorismo Tech</strong> - Material didático para ensino de tecnologia e empreendedorismo
+            </p>
+            <p class="footer-text" style="margin-top: 10px;">
+                Desenvolvido com ❤️ para educadores e alunos | Última atualização: Fevereiro 2024
+            </p>
+            <p class="footer-text" style="margin-top: 15px; font-size: 0.8rem;">
+                Todos os exemplos são open-source e podem ser usados livremente para fins educacionais
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // Adiciona efeito de carregamento suave
+        document.addEventListener('DOMContentLoaded', function() {
+            // Animação de entrada para as seções
+            const sections = document.querySelectorAll('.section');
+            sections.forEach((section, index) => {
+                section.style.opacity = '0';
+                section.style.transform = 'translateY(20px)';
+                
+                setTimeout(() => {
+                    section.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                    section.style.opacity = '1';
+                    section.style.transform = 'translateY(0)';
+                }, 100 * index);
+            });
+            
+            // Efeito de clique nos links
+            document.querySelectorAll('.link-item a').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    // Adiciona efeito visual de clique
+                    this.style.transform = 'scale(0.95)';
+                    setTimeout(() => {
+                        this.style.transform = '';
+                    }, 200);
+                    
+                    // Para links externos, abre em nova aba automaticamente
+                    if (this.href.includes('http') && !this.href.includes(location.hostname)) {
+                        e.preventDefault();
+                        window.open(this.href, '_blank');
+                    }
+                });
+            });
+            
+            // Efeito de hover nos botões
+            document.querySelectorAll('.btn').forEach(btn => {
+                btn.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-3px)';
+                });
+                
+                btn.addEventListener('mouseleave', function() {
+                    this.style.transform = '';
+                });
+            });
+            
+            // Adiciona data atual no footer
+            const dateElements = document.querySelectorAll('.footer-text');
+            if (dateElements.length > 1) {
+                const currentDate = new Date().toLocaleDateString('pt-BR', {
+                    day: '2-digit',
+                    month: 'long',
+                    year: 'numeric'
+                });
+                dateElements[1].innerHTML = dateElements[1].innerHTML.replace('Fevereiro 2024', currentDate);
+            }
+        });
+        
+        // Efeito de confetti ao carregar a página
+        window.addEventListener('load', function() {
+            const colors = ['#FF6B8B', '#00CED1', '#9370DB', '#FFA500', '#667eea'];
+            
+            // Cria alguns confettis iniciais
+            for (let i = 0; i < 20; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.style.position = 'fixed';
+                    confetti.style.width = '10px';
+                    confetti.style.height = '10px';
+                    confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.borderRadius = '50%';
+                    confetti.style.left = Math.random() * 100 + '%';
+                    confetti.style.top = '-20px';
+                    confetti.style.zIndex = '9999';
+                    confetti.style.pointerEvents = 'none';
+                    
+                    document.body.appendChild(confetti);
+                    
+                    // Animação
+                    const animation = confetti.animate([
+                        { transform: 'translateY(0) rotate(0deg)', opacity: 1 },
+                        { transform: `translateY(${window.innerHeight}px) rotate(${Math.random() * 360}deg)`, opacity: 0 }
+                    ], {
+                        duration: Math.random() * 2000 + 1000,
+                        easing: 'cubic-bezier(0.215, 0.610, 0.355, 1)'
+                    });
+                    
+                    animation.onfinish = () => confetti.remove();
+                }, i * 100);
+            }
+        });
+    </script>
+</body>
+</html>

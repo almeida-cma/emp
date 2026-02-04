@@ -1,0 +1,2113 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🚀 Pitch Perfeito - Gerador de Apresentações</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    /* ===== VARIÁVEIS GLOBAIS ===== */
+    :root {
+      --cor-fundo: #f8fafc;
+      --cor-card: #ffffff;
+      --cor-texto: #1e293b;
+      --cor-primaria: #3b82f6;
+      --cor-secundaria: #8b5cf6;
+      --cor-destaque: #ef4444;
+      --cor-sucesso: #10b981;
+      --cor-aviso: #f59e0b;
+      --sombra: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      --sombra-forte: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+      --borda: 1px solid #e2e8f0;
+      --radius: 12px;
+      --transicao: all 0.3s ease;
+    }
+
+    .tema-escuro {
+      --cor-fundo: #0f172a;
+      --cor-card: #1e293b;
+      --cor-texto: #f1f5f9;
+      --cor-primaria: #60a5fa;
+      --cor-secundaria: #a78bfa;
+      --sombra: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+      --sombra-forte: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+      --borda: 1px solid #334155;
+    }
+
+    /* ===== RESET E BASE ===== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: var(--cor-fundo);
+      color: var(--cor-texto);
+      line-height: 1.6;
+      transition: var(--transicao);
+      min-height: 100vh;
+    }
+
+    /* ===== LAYOUT PRINCIPAL ===== */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    .app {
+      display: grid;
+      grid-template-columns: 300px 1fr;
+      gap: 30px;
+      min-height: 100vh;
+      padding: 20px 0;
+    }
+
+    @media (max-width: 1024px) {
+      .app {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* ===== PAINEL ESQUERDO - ROTEIRO ===== */
+    .roteiro-panel {
+      background: var(--cor-card);
+      border-radius: var(--radius);
+      padding: 25px;
+      box-shadow: var(--sombra-forte);
+      border: var(--borda);
+      position: sticky;
+      top: 20px;
+      height: calc(100vh - 40px);
+      overflow-y: auto;
+    }
+
+    .logo {
+      text-align: center;
+      margin-bottom: 30px;
+      padding-bottom: 20px;
+      border-bottom: var(--borda);
+    }
+
+    .logo h1 {
+      font-size: 1.8rem;
+      color: var(--cor-primaria);
+      margin-bottom: 5px;
+    }
+
+    .logo p {
+      color: #64748b;
+      font-size: 0.9rem;
+    }
+
+    /* Lista de etapas */
+    .etapas-lista {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .etapa-item {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      padding: 15px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: var(--transicao);
+      border: 2px solid transparent;
+      background: rgba(59, 130, 246, 0.05);
+    }
+
+    .etapa-item:hover {
+      background: rgba(59, 130, 246, 0.1);
+      transform: translateX(5px);
+    }
+
+    .etapa-item.ativa {
+      background: var(--cor-primaria);
+      color: white;
+      border-color: var(--cor-primaria);
+    }
+
+    .etapa-item.completa {
+      background: rgba(16, 185, 129, 0.1);
+      border-color: var(--cor-sucesso);
+    }
+
+    .etapa-numero {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      background: white;
+      color: var(--cor-primaria);
+      border: 2px solid var(--cor-primaria);
+      flex-shrink: 0;
+    }
+
+    .etapa-item.ativa .etapa-numero {
+      background: white;
+      color: var(--cor-primaria);
+    }
+
+    .etapa-item.completa .etapa-numero {
+      background: var(--cor-sucesso);
+      color: white;
+      border-color: var(--cor-sucesso);
+    }
+
+    .etapa-info h3 {
+      font-size: 1rem;
+      margin-bottom: 5px;
+    }
+
+    .etapa-info p {
+      font-size: 0.85rem;
+      opacity: 0.8;
+    }
+
+    /* Controles gerais */
+    .controles {
+      margin-top: 30px;
+      padding-top: 20px;
+      border-top: var(--borda);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 24px;
+      border-radius: 8px;
+      border: none;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transicao);
+      font-size: 0.95rem;
+      width: 100%;
+      margin-bottom: 10px;
+    }
+
+    .btn-primario {
+      background: var(--cor-primaria);
+      color: white;
+    }
+
+    .btn-primario:hover {
+      background: #2563eb;
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(59, 130, 246, 0.3);
+    }
+
+    .btn-secundario {
+      background: var(--cor-card);
+      color: var(--cor-texto);
+      border: 2px solid var(--borda);
+    }
+
+    .btn-secundario:hover {
+      background: rgba(59, 130, 246, 0.1);
+      border-color: var(--cor-primaria);
+    }
+
+    .btn-perigo {
+      background: #ef4444;
+      color: white;
+    }
+
+    .btn-perigo:hover {
+      background: #dc2626;
+    }
+
+    .btn-sucesso {
+      background: var(--cor-sucesso);
+      color: white;
+    }
+
+    .btn-sucesso:hover {
+      background: #0da271;
+    }
+
+    /* ===== PAINEL DIREITO - FORMULÁRIO ===== */
+    .formulario-panel {
+      background: var(--cor-card);
+      border-radius: var(--radius);
+      padding: 40px;
+      box-shadow: var(--sombra-forte);
+      border: var(--borda);
+      min-height: calc(100vh - 40px);
+    }
+
+    .etapa-conteudo {
+      display: none;
+      animation: aparecer 0.5s ease;
+    }
+
+    @keyframes aparecer {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .etapa-conteudo.ativa {
+      display: block;
+    }
+
+    .etapa-titulo {
+      font-size: 2rem;
+      color: var(--cor-primaria);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .etapa-titulo i {
+      font-size: 1.5rem;
+    }
+
+    .etapa-descricao {
+      color: #64748b;
+      margin-bottom: 30px;
+      font-size: 1.1rem;
+    }
+
+    /* ===== FORMULÁRIOS ===== */
+    .form-group {
+      margin-bottom: 25px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 10px;
+      font-weight: 600;
+      color: var(--cor-texto);
+      font-size: 1.1rem;
+    }
+
+    .form-group .dica {
+      display: block;
+      font-size: 0.9rem;
+      color: #64748b;
+      margin-top: 5px;
+      font-style: italic;
+    }
+
+    input[type="text"],
+    input[type="url"],
+    textarea,
+    select {
+      width: 100%;
+      padding: 15px;
+      border: var(--borda);
+      border-radius: 8px;
+      font-size: 1rem;
+      transition: var(--transicao);
+      background: var(--cor-card);
+      color: var(--cor-texto);
+    }
+
+    input:focus,
+    textarea:focus,
+    select:focus {
+      outline: none;
+      border-color: var(--cor-primaria);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+    }
+
+    textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+
+    /* Seletor de cores */
+    .cores-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 20px;
+      margin-top: 20px;
+    }
+
+    .cor-option {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      padding: 15px;
+      border-radius: 8px;
+      border: 2px solid transparent;
+      cursor: pointer;
+      transition: var(--transicao);
+      background: var(--cor-card);
+    }
+
+    .cor-option:hover {
+      border-color: var(--cor-primaria);
+      transform: translateY(-2px);
+    }
+
+    .cor-option.selecionada {
+      border-color: var(--cor-primaria);
+      background: rgba(59, 130, 246, 0.1);
+    }
+
+    .cor-preview {
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      border: 2px solid #e2e8f0;
+    }
+
+    .cor-info h4 {
+      margin-bottom: 5px;
+    }
+
+    .cor-info span {
+      font-size: 0.9rem;
+      color: #64748b;
+    }
+
+    /* Seletor de tipo de solução */
+    .solucoes-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    .solucao-option {
+      text-align: center;
+      padding: 25px 15px;
+      border-radius: 10px;
+      border: 2px solid transparent;
+      cursor: pointer;
+      transition: var(--transicao);
+      background: var(--cor-card);
+    }
+
+    .solucao-option:hover {
+      border-color: var(--cor-primaria);
+      transform: translateY(-3px);
+    }
+
+    .solucao-option.selecionada {
+      border-color: var(--cor-primaria);
+      background: rgba(59, 130, 246, 0.1);
+      box-shadow: var(--sombra);
+    }
+
+    .solucao-option i {
+      font-size: 2rem;
+      color: var(--cor-primaria);
+      margin-bottom: 10px;
+    }
+
+    /* Funcionalidades */
+    .funcionalidades-container {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    .funcionalidade-item {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      padding: 15px;
+      border-radius: 8px;
+      border: var(--borda);
+      background: var(--cor-card);
+    }
+
+    .funcionalidade-item input {
+      flex: 1;
+      border: none;
+      padding: 0;
+      background: transparent;
+      color: var(--cor-texto);
+    }
+
+    .funcionalidade-item input:focus {
+      outline: none;
+      box-shadow: none;
+    }
+
+    .remover-funcionalidade {
+      color: #ef4444;
+      cursor: pointer;
+      padding: 5px;
+      border-radius: 4px;
+      transition: var(--transicao);
+    }
+
+    .remover-funcionalidade:hover {
+      background: rgba(239, 68, 68, 0.1);
+    }
+
+    .adicionar-funcionalidade {
+      color: var(--cor-primaria);
+      cursor: pointer;
+      padding: 15px;
+      border: 2px dashed var(--cor-primaria);
+      border-radius: 8px;
+      text-align: center;
+      transition: var(--transicao);
+      margin-top: 10px;
+    }
+
+    .adicionar-funcionalidade:hover {
+      background: rgba(59, 130, 246, 0.1);
+    }
+
+    /* Upload de imagem */
+    .upload-container {
+      border: 2px dashed var(--cor-primaria);
+      border-radius: 10px;
+      padding: 40px;
+      text-align: center;
+      cursor: pointer;
+      transition: var(--transicao);
+      margin-top: 20px;
+      background: rgba(59, 130, 246, 0.05);
+    }
+
+    .upload-container:hover {
+      background: rgba(59, 130, 246, 0.1);
+    }
+
+    .upload-icon {
+      font-size: 3rem;
+      color: var(--cor-primaria);
+      margin-bottom: 20px;
+    }
+
+    .upload-preview {
+      max-width: 100%;
+      max-height: 300px;
+      border-radius: 8px;
+      margin-top: 20px;
+      display: none;
+      box-shadow: var(--sombra);
+    }
+
+    .upload-preview.ativa {
+      display: block;
+    }
+
+    /* Público alvo */
+    .publico-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    .publico-option {
+      text-align: center;
+      padding: 20px 10px;
+      border-radius: 8px;
+      border: 2px solid transparent;
+      cursor: pointer;
+      transition: var(--transicao);
+      background: var(--cor-card);
+    }
+
+    .publico-option:hover {
+      border-color: var(--cor-primaria);
+    }
+
+    .publico-option.selecionada {
+      border-color: var(--cor-primaria);
+      background: rgba(59, 130, 246, 0.1);
+    }
+
+    /* Modelo de negócio */
+    .modelo-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 20px;
+      margin-top: 20px;
+    }
+
+    .modelo-option {
+      padding: 25px 15px;
+      border-radius: 10px;
+      border: 2px solid transparent;
+      cursor: pointer;
+      transition: var(--transicao);
+      text-align: center;
+      background: var(--cor-card);
+    }
+
+    .modelo-option:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--sombra);
+    }
+
+    .modelo-option.selecionada {
+      border-color: var(--cor-primaria);
+      background: rgba(59, 130, 246, 0.1);
+    }
+
+    .modelo-option i {
+      font-size: 2rem;
+      color: var(--cor-primaria);
+      margin-bottom: 15px;
+    }
+
+    /* ===== PREVIEW DO PITCH ===== */
+    .preview-container {
+      background: white;
+      border-radius: 20px;
+      padding: 40px;
+      margin-top: 30px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+      border: 1px solid #e5e7eb;
+      max-width: 800px;
+      margin-left: auto;
+      margin-right: auto;
+      transition: var(--transicao);
+    }
+
+    .preview-header {
+      text-align: center;
+      margin-bottom: 40px;
+      padding-bottom: 20px;
+      border-bottom: 3px solid;
+    }
+
+    .preview-titulo {
+      font-size: 2.8rem;
+      font-weight: 800;
+      margin-bottom: 10px;
+      color: var(--preview-cor-primaria, #3b82f6);
+    }
+
+    .preview-subtitulo {
+      font-size: 1.2rem;
+      color: #6b7280;
+    }
+
+    .preview-section {
+      margin-bottom: 30px;
+      padding: 25px;
+      border-radius: 12px;
+      background: #f9fafb;
+      border-left: 5px solid var(--preview-cor-primaria, #3b82f6);
+    }
+
+    .preview-section h3 {
+      font-size: 1.4rem;
+      color: var(--preview-cor-primaria, #3b82f6);
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .preview-section p {
+      font-size: 1.1rem;
+      line-height: 1.8;
+      color: #374151;
+    }
+
+    .preview-imagem {
+      max-width: 100%;
+      border-radius: 12px;
+      margin: 20px auto;
+      display: block;
+      box-shadow: var(--sombra);
+    }
+
+    .preview-footer {
+      text-align: center;
+      margin-top: 40px;
+      padding-top: 20px;
+      border-top: 2px solid #e5e7eb;
+      font-style: italic;
+      color: #6b7280;
+    }
+
+    /* ===== MODAL DE EXPORTAÇÃO ===== */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .modal-conteudo {
+      background: var(--cor-card);
+      border-radius: 20px;
+      padding: 40px;
+      max-width: 500px;
+      width: 90%;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+      animation: slideUp 0.4s ease;
+    }
+
+    @keyframes slideUp {
+      from { transform: translateY(50px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+    }
+
+    .modal-header h2 {
+      font-size: 1.8rem;
+      color: var(--cor-primaria);
+    }
+
+    .fechar-modal {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      color: #64748b;
+      cursor: pointer;
+      padding: 5px;
+      border-radius: 4px;
+      transition: var(--transicao);
+    }
+
+    .fechar-modal:hover {
+      color: var(--cor-destaque);
+      background: rgba(239, 68, 68, 0.1);
+    }
+
+    /* ===== RESPONSIVIDADE ===== */
+    @media (max-width: 768px) {
+      .container {
+        padding: 0 15px;
+      }
+      
+      .app {
+        gap: 20px;
+      }
+      
+      .roteiro-panel {
+        position: relative;
+        top: 0;
+        height: auto;
+      }
+      
+      .formulario-panel {
+        padding: 25px;
+      }
+      
+      .etapa-titulo {
+        font-size: 1.6rem;
+      }
+      
+      .preview-container {
+        padding: 25px;
+      }
+      
+      .preview-titulo {
+        font-size: 2.2rem;
+      }
+    }
+
+    /* ===== UTILITÁRIOS ===== */
+    .oculto {
+      display: none !important;
+    }
+
+    .visivel {
+      display: block !important;
+    }
+
+    .mensagem {
+      padding: 15px;
+      border-radius: 8px;
+      margin: 15px 0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      animation: slideIn 0.3s ease;
+    }
+
+    @keyframes slideIn {
+      from { transform: translateX(-20px); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+
+    .mensagem.sucesso {
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid var(--cor-sucesso);
+      color: var(--cor-sucesso);
+    }
+
+    .mensagem.aviso {
+      background: rgba(245, 158, 11, 0.1);
+      border: 1px solid var(--cor-aviso);
+      color: var(--cor-aviso);
+    }
+
+    .progresso-container {
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: var(--borda);
+    }
+
+    .progresso-texto {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      font-size: 0.9rem;
+      color: #64748b;
+    }
+
+    .progresso-bar {
+      height: 8px;
+      background: #e2e8f0;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .progresso-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--cor-primaria), var(--cor-secundaria));
+      border-radius: 4px;
+      transition: width 0.5s ease;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="app">
+      <!-- PAINEL ESQUERDO: ROTEIRO -->
+      <div class="roteiro-panel">
+        <div class="logo">
+          <h1><i class="fas fa-rocket"></i> Pitch Perfeito</h1>
+          <p>Empreender em Tecnologia: da Ideia ao Negócio</p>
+        </div>
+
+        <div class="etapas-lista" id="etapasLista">
+          <!-- Etapas serão preenchidas via JavaScript -->
+        </div>
+
+        <div class="controles">
+          <div class="progresso-container">
+            <div class="progresso-texto">
+              <span>Progresso</span>
+              <span id="progressoPorcentagem">0%</span>
+            </div>
+            <div class="progresso-bar">
+              <div class="progresso-fill" id="progressoFill" style="width: 0%"></div>
+            </div>
+          </div>
+
+          <button class="btn btn-primario" onclick="avancarEtapa()" id="btnAvancar">
+            <i class="fas fa-arrow-right"></i> Próxima Etapa
+          </button>
+          
+          <button class="btn btn-secundario" onclick="retrocederEtapa()" id="btnVoltar">
+            <i class="fas fa-arrow-left"></i> Etapa Anterior
+          </button>
+          
+          <button class="btn btn-sucesso" onclick="abrirModalExportacao()">
+            <i class="fas fa-file-export"></i> Exportar para PDF
+          </button>
+          
+          <button class="btn btn-perigo" onclick="resetarPlano()">
+            <i class="fas fa-redo"></i> Resetar Plano
+          </button>
+
+          <div class="mensagem sucesso oculto" id="mensagemSucesso">
+            <i class="fas fa-check-circle"></i>
+            <span>Progresso salvo automaticamente!</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- PAINEL DIREITO: FORMULÁRIO -->
+      <div class="formulario-panel">
+        <!-- ETAPA 1: Nome da Solução -->
+        <div class="etapa-conteudo ativa" id="etapa1">
+          <h2 class="etapa-titulo"><i class="fas fa-signature"></i> 1️⃣ Nome da Solução</h2>
+          <p class="etapa-descricao">"Nossa solução se chama __________."</p>
+          
+          <div class="form-group">
+            <label for="nomeSolucao">Nome da sua solução</label>
+            <p class="dica">Nome curto, fácil de lembrar e que represente bem o produto</p>
+            <input type="text" id="nomeSolucao" placeholder="Ex: StudyFlow, HealthTrack, GameHub" maxlength="50">
+          </div>
+
+          <div class="form-group">
+            <label>Personalize as cores da sua apresentação</label>
+            <p class="dica">Escolha uma paleta de cores que represente sua marca</p>
+            
+            <div class="cores-container">
+              <div class="cor-option selecionada" onclick="selecionarCor('azul', '#3b82f6')">
+                <div class="cor-preview" style="background: #3b82f6;"></div>
+                <div class="cor-info">
+                  <h4>Azul Profissional</h4>
+                  <span>#3b82f6</span>
+                </div>
+              </div>
+              
+              <div class="cor-option" onclick="selecionarCor('verde', '#10b981')">
+                <div class="cor-preview" style="background: #10b981;"></div>
+                <div class="cor-info">
+                  <h4>Verde Inovador</h4>
+                  <span>#10b981</span>
+                </div>
+              </div>
+              
+              <div class="cor-option" onclick="selecionarCor('roxo', '#8b5cf6')">
+                <div class="cor-preview" style="background: #8b5cf6;"></div>
+                <div class="cor-info">
+                  <h4>Roxo Criativo</h4>
+                  <span>#8b5cf6</span>
+                </div>
+              </div>
+              
+              <div class="cor-option" onclick="selecionarCor('vermelho', '#ef4444')">
+                <div class="cor-preview" style="background: #ef4444;"></div>
+                <div class="cor-info">
+                  <h4>Vermelho Impactante</h4>
+                  <span>#ef4444</span>
+                </div>
+              </div>
+              
+              <div class="cor-option" onclick="selecionarCor('personalizada', '#000000')">
+                <div class="cor-preview" id="corPersonalizadaPreview" style="background: #000000;"></div>
+                <div class="cor-info">
+                  <h4>Cor Personalizada</h4>
+                  <span>Escolha qualquer cor</span>
+                </div>
+              </div>
+            </div>
+            
+            <div id="seletorPersonalizado" class="oculto" style="margin-top: 20px;">
+              <label for="corPersonalizada">Escolha sua cor</label>
+              <input type="color" id="corPersonalizada" value="#000000" style="width: 100%; height: 50px; border-radius: 8px;">
+            </div>
+          </div>
+        </div>
+
+        <!-- ETAPA 2: Problema -->
+        <div class="etapa-conteudo" id="etapa2">
+          <h2 class="etapa-titulo"><i class="fas fa-exclamation-triangle"></i> 2️⃣ Problema que Motivou a Ideia</h2>
+          <p class="etapa-descricao">"Percebemos um problema que acontece quando __________."</p>
+          
+          <div class="form-group">
+            <label for="problemaDescricao">Descreva o problema</label>
+            <p class="dica">Seja específico sobre a situação e quem sofre com isso</p>
+            <textarea id="problemaDescricao" placeholder="Ex: Estudantes frequentemente perdem prazos de entrega porque não têm uma forma centralizada de organizar tarefas..."></textarea>
+          </div>
+          
+          <div class="form-group">
+            <label for="quemSofre">Quem sofre com esse problema?</label>
+            <input type="text" id="quemSofre" placeholder="Ex: Estudantes do ensino médio, Pequenos comerciantes, Jogadores mobile">
+          </div>
+          
+          <div class="form-group">
+            <label for="quandoAcontece">Em que situação ele aparece?</label>
+            <input type="text" id="quandoAcontece" placeholder="Ex: Durante os períodos de provas, No fechamento do mês, Durante sessões de jogo">
+          </div>
+        </div>
+
+        <!-- ETAPA 3: Tipo de Solução -->
+        <div class="etapa-conteudo" id="etapa3">
+          <h2 class="etapa-titulo"><i class="fas fa-laptop-code"></i> 3️⃣ Tipo de Solução Tecnológica</h2>
+          <p class="etapa-descricao">"Para resolver isso, criamos um(a) __________."</p>
+          
+          <div class="solucoes-grid">
+            <div class="solucao-option" onclick="selecionarSolucao('mobile')">
+              <i class="fas fa-mobile-alt"></i>
+              <h4>Aplicativo Mobile</h4>
+              <p>Para smartphones</p>
+            </div>
+            
+            <div class="solucao-option" onclick="selecionarSolucao('site')">
+              <i class="fas fa-globe"></i>
+              <h4>Site</h4>
+              <p>Acessível por navegador</p>
+            </div>
+            
+            <div class="solucao-option" onclick="selecionarSolucao('sistema')">
+              <i class="fas fa-desktop"></i>
+              <h4>Sistema Web</h4>
+              <p>Plataforma completa</p>
+            </div>
+            
+            <div class="solucao-option" onclick="selecionarSolucao('jogo')">
+              <i class="fas fa-gamepad"></i>
+              <h4>Jogo</h4>
+              <p>Entretenimento ou educativo</p>
+            </div>
+            
+            <div class="solucao-option" onclick="selecionarSolucao('ia')">
+              <i class="fas fa-robot"></i>
+              <h4>Solução com IA</h4>
+              <p>Inteligência Artificial</p>
+            </div>
+          </div>
+          
+          <input type="hidden" id="tipoSolucao" value="">
+        </div>
+
+        <!-- ETAPA 4: Funcionalidades -->
+        <div class="etapa-conteudo" id="etapa4">
+          <h2 class="etapa-titulo"><i class="fas fa-cogs"></i> 4️⃣ Como a Solução Funciona</h2>
+          <p class="etapa-descricao">"As principais funcionalidades são:"</p>
+          
+          <div class="funcionalidades-container" id="funcionalidadesContainer">
+            <!-- Funcionalidades serão adicionadas aqui -->
+          </div>
+          
+          <div class="adicionar-funcionalidade" onclick="adicionarFuncionalidade()">
+            <i class="fas fa-plus"></i> Adicionar Funcionalidade
+          </div>
+          
+          <div class="mensagem aviso" id="avisoFuncionalidades">
+            <i class="fas fa-info-circle"></i>
+            <span>Adicione no máximo 3 funcionalidades principais</span>
+          </div>
+        </div>
+
+        <!-- ETAPA 5: MVP -->
+        <div class="etapa-conteudo" id="etapa5">
+          <h2 class="etapa-titulo"><i class="fas fa-layer-group"></i> 5️⃣ MVP — Primeira Versão</h2>
+          <p class="etapa-descricao">"Na primeira versão, o essencial que precisa funcionar é __________."</p>
+          
+          <div class="form-group">
+            <label for="mvpDescricao">Descreva o MVP (Mínimo Produto Viável)</label>
+            <p class="dica">O mínimo necessário para validar a ideia com usuários reais</p>
+            <textarea id="mvpDescricao" placeholder="Ex: Na primeira versão, precisamos ter: login básico, criação de tarefas e notificações simples. O resto pode vir depois..."></textarea>
+          </div>
+        </div>
+
+        <!-- ETAPA 6: Demonstração Visual -->
+        <div class="etapa-conteudo" id="etapa6">
+          <h2 class="etapa-titulo"><i class="fas fa-image"></i> 6️⃣ Demonstração Visual</h2>
+          <p class="etapa-descricao">"Aqui está um exemplo de como o produto seria."</p>
+          
+          <div class="form-group">
+            <label>Escolha uma forma de demonstrar</label>
+            <p class="dica">Mostre como o produto se pareceria para os usuários</p>
+            
+            <select id="tipoDemonstracao" onchange="atualizarUpload()">
+              <option value="">Selecione uma opção</option>
+              <option value="imagem">Tela desenhada / Wireframe</option>
+              <option value="prototipo">Protótipo interativo</option>
+              <option value="html">Página HTML</option>
+              <option value="descricao">Descrição textual</option>
+            </select>
+          </div>
+          
+          <div id="uploadArea" class="oculto">
+            <div class="upload-container" onclick="document.getElementById('fileUpload').click()" id="uploadContainer">
+              <div class="upload-icon">
+                <i class="fas fa-cloud-upload-alt"></i>
+              </div>
+              <h3>Clique para fazer upload da imagem</h3>
+              <p>Arraste e solte ou clique para selecionar</p>
+              <p style="font-size: 0.9rem; color: #64748b; margin-top: 10px;">
+                Formatos suportados: JPG, PNG, GIF (max 5MB)
+              </p>
+              <img id="imagePreview" class="upload-preview" alt="Prévia da imagem">
+              <input type="file" id="fileUpload" accept="image/*" style="display: none;" onchange="previewImage(event)">
+            </div>
+          </div>
+          
+          <div id="descricaoArea" class="oculto" style="margin-top: 20px;">
+            <textarea id="descricaoVisual" placeholder="Descreva como seria a interface do seu produto..."></textarea>
+          </div>
+        </div>
+
+        <!-- ETAPA 7: Público-Alvo -->
+        <div class="etapa-conteudo" id="etapa7">
+          <h2 class="etapa-titulo"><i class="fas fa-users"></i> 7️⃣ Público-Alvo</h2>
+          <p class="etapa-descricao">"Esse produto é pensado principalmente para __________."</p>
+          
+          <div class="publico-grid">
+            <div class="publico-option" onclick="selecionarPublico('estudantes')">
+              <i class="fas fa-graduation-cap"></i>
+              <h4>Estudantes</h4>
+            </div>
+            
+            <div class="publico-option" onclick="selecionarPublico('jovens')">
+              <i class="fas fa-user-friends"></i>
+              <h4>Jovens</h4>
+            </div>
+            
+            <div class="publico-option" onclick="selecionarPublico('professores')">
+              <i class="fas fa-chalkboard-teacher"></i>
+              <h4>Professores</h4>
+            </div>
+            
+            <div class="publico-option" onclick="selecionarPublico('jogadores')">
+              <i class="fas fa-gamepad"></i>
+              <h4>Jogadores</h4>
+            </div>
+            
+            <div class="publico-option" onclick="selecionarPublico('negocios')">
+              <i class="fas fa-briefcase"></i>
+              <h4>Pequenos Negócios</h4>
+            </div>
+            
+            <div class="publico-option" onclick="selecionarPublico('geral')">
+              <i class="fas fa-globe-americas"></i>
+              <h4>Público em Geral</h4>
+            </div>
+          </div>
+          
+          <div style="margin-top: 20px;">
+            <input type="text" id="publicoPersonalizado" placeholder="Ou especifique outro público-alvo..." style="width: 100%;">
+          </div>
+          
+          <input type="hidden" id="publicoSelecionado" value="">
+        </div>
+
+        <!-- ETAPA 8: Modelo de Negócio -->
+        <div class="etapa-conteudo" id="etapa8">
+          <h2 class="etapa-titulo"><i class="fas fa-chart-line"></i> 8️⃣ Ideia de Negócio</h2>
+          <p class="etapa-descricao">"Pensamos que esse produto pode funcionar como um negócio da seguinte forma:"</p>
+          
+          <div class="modelo-grid">
+            <div class="modelo-option" onclick="selecionarModelo('gratuito')">
+              <i class="fas fa-gift"></i>
+              <h4>Gratuito</h4>
+              <p>Sem custo para o usuário</p>
+            </div>
+            
+            <div class="modelo-option" onclick="selecionarModelo('anuncios')">
+              <i class="fas fa-ad"></i>
+              <h4>Com Anúncios</h4>
+              <p>Receita por publicidade</p>
+            </div>
+            
+            <div class="modelo-option" onclick="selecionarModelo('assinatura')">
+              <i class="fas fa-credit-card"></i>
+              <h4>Assinatura</h4>
+              <p>Mensal ou anual</p>
+            </div>
+            
+            <div class="modelo-option" onclick="selecionarModelo('premium')">
+              <i class="fas fa-crown"></i>
+              <h4>Versão Premium</h4>
+              <p>Recursos extras pagos</p>
+            </div>
+            
+            <div class="modelo-option" onclick="selecionarModelo('parcerias')">
+              <i class="fas fa-handshake"></i>
+              <h4>Parcerias</h4>
+              <p>Vendas cruzadas</p>
+            </div>
+          </div>
+          
+          <div style="margin-top: 30px;">
+            <label for="detalhesNegocio">Detalhes do modelo de negócio</label>
+            <textarea id="detalhesNegocio" placeholder="Explique como funcionaria na prática..."></textarea>
+          </div>
+          
+          <input type="hidden" id="modeloSelecionado" value="">
+        </div>
+
+        <!-- ETAPA 9: Encerramento -->
+        <div class="etapa-conteudo" id="etapa9">
+          <h2 class="etapa-titulo"><i class="fas fa-flag-checkered"></i> 9️⃣ Encerramento</h2>
+          <p class="etapa-descricao">"Essa é a nossa ideia de produto e negócio."</p>
+          
+          <div class="form-group">
+            <label for="sloganFinal">Frase de impacto ou slogan final</label>
+            <p class="dica">Deixe uma mensagem marcante para encerrar sua apresentação</p>
+            <input type="text" id="sloganFinal" placeholder="Ex: Transformando desafios em oportunidades com tecnologia!" maxlength="100">
+          </div>
+          
+          <div class="mensagem sucesso" style="margin-top: 30px;">
+            <i class="fas fa-trophy"></i>
+            <span>Parabéns! Você completou todo o roteiro do pitch. Agora é só exportar e apresentar!</span>
+          </div>
+          
+          <!-- PREVIEW DO PITCH -->
+          <div class="preview-container" id="previewPitch">
+            <div class="preview-header" id="previewHeader">
+              <h1 class="preview-titulo" id="previewTitulo">Nome da Solução</h1>
+              <p class="preview-subtitulo" id="previewSubtitulo">Empreender em Tecnologia: da Ideia ao Negócio</p>
+            </div>
+            
+            <div class="preview-section" id="previewProblema">
+              <h3><i class="fas fa-exclamation-triangle"></i> O Problema</h3>
+              <p id="previewTextoProblema">[Descrição do problema aparecerá aqui]</p>
+            </div>
+            
+            <div class="preview-section" id="previewSolucao">
+              <h3><i class="fas fa-lightbulb"></i> Nossa Solução</h3>
+              <p id="previewTextoSolucao">[Descrição da solução aparecerá aqui]</p>
+            </div>
+            
+            <div class="preview-section" id="previewFuncionalidades">
+              <h3><i class="fas fa-cogs"></i> Funcionalidades Principais</h3>
+              <ul id="previewListaFuncionalidades">
+                <li>[Funcionalidades aparecerão aqui]</li>
+              </ul>
+            </div>
+            
+            <div class="preview-section" id="previewMVP">
+              <h3><i class="fas fa-layer-group"></i> MVP - Primeira Versão</h3>
+              <p id="previewTextoMVP">[Descrição do MVP aparecerá aqui]</p>
+            </div>
+            
+            <div class="preview-section" id="previewDemonstracao">
+              <h3><i class="fas fa-image"></i> Demonstração Visual</h3>
+              <div id="previewAreaImagem">
+                <!-- Imagem ou descrição aparecerá aqui -->
+              </div>
+            </div>
+            
+            <div class="preview-section" id="previewPublico">
+              <h3><i class="fas fa-users"></i> Público-Alvo</h3>
+              <p id="previewTextoPublico">[Público-alvo aparecerá aqui]</p>
+            </div>
+            
+            <div class="preview-section" id="previewNegocio">
+              <h3><i class="fas fa-chart-line"></i> Modelo de Negócio</h3>
+              <p id="previewTextoNegocio">[Modelo de negócio aparecerá aqui]</p>
+            </div>
+            
+            <div class="preview-footer" id="previewFooter">
+              <p id="previewSlogan">[Slogan final aparecerá aqui]</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL DE EXPORTAÇÃO -->
+  <div class="modal" id="modalExportacao">
+    <div class="modal-conteudo">
+      <div class="modal-header">
+        <h2><i class="fas fa-file-export"></i> Exportar Pitch</h2>
+        <button class="fechar-modal" onclick="fecharModalExportacao()">&times;</button>
+      </div>
+      
+      <div class="form-group">
+        <label for="nomeArquivo">Nome do arquivo PDF</label>
+        <input type="text" id="nomeArquivo" placeholder="meu-pitch-empreendedor" value="pitch-empreendedor-tech">
+      </div>
+      
+      <div class="form-group">
+        <label>Opções de exportação</label>
+        <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 10px;">
+          <label style="display: flex; align-items: center; gap: 10px;">
+            <input type="checkbox" id="incluirPreview" checked>
+            <span>Incluir preview visual do pitch</span>
+          </label>
+          
+          <label style="display: flex; align-items: center; gap: 10px;">
+            <input type="checkbox" id="incluirDados" checked>
+            <span>Incluir todos os dados preenchidos</span>
+          </label>
+          
+          <label style="display: flex; align-items: center; gap: 10px;">
+            <input type="checkbox" id="incluirTimestamp" checked>
+            <span>Adicionar data e hora da exportação</span>
+          </label>
+        </div>
+      </div>
+      
+      <div class="mensagem aviso" style="margin: 20px 0;">
+        <i class="fas fa-info-circle"></i>
+        <span>O PDF será gerado e baixado automaticamente. Todos os dados também serão salvos no navegador.</span>
+      </div>
+      
+      <div class="btn-group" style="display: flex; gap: 10px; margin-top: 20px;">
+        <button class="btn btn-secundario" onclick="fecharModalExportacao()">
+          Cancelar
+        </button>
+        <button class="btn btn-sucesso" onclick="gerarPDF()">
+          <i class="fas fa-file-pdf"></i> Gerar e Baixar PDF
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCRIPT PRINCIPAL -->
+  <script>
+    // ===== CONFIGURAÇÃO INICIAL =====
+    let etapaAtual = 1;
+    const totalEtapas = 9;
+    let dadosPitch = {
+      nomeSolucao: '',
+      corPrimaria: '#3b82f6',
+      corSelecionada: 'azul',
+      problema: '',
+      quemSofre: '',
+      quandoAcontece: '',
+      tipoSolucao: '',
+      funcionalidades: ['', '', ''],
+      mvp: '',
+      tipoDemonstracao: '',
+      imagemUrl: '',
+      descricaoVisual: '',
+      publicoAlvo: '',
+      modeloNegocio: '',
+      detalhesNegocio: '',
+      sloganFinal: ''
+    };
+
+    // ===== INICIALIZAÇÃO =====
+    document.addEventListener('DOMContentLoaded', function() {
+      // Criar lista de etapas
+      criarListaEtapas();
+      
+      // Carregar dados salvos
+      carregarDadosSalvos();
+      
+      // Inicializar funcionalidades
+      inicializarFuncionalidades();
+      
+      // Atualizar preview
+      atualizarPreview();
+    });
+
+    // ===== LISTA DE ETAPAS =====
+    function criarListaEtapas() {
+      const etapas = [
+        { numero: '1️⃣', titulo: 'Nome da Solução', descricao: 'Defina o nome e cores' },
+        { numero: '2️⃣', titulo: 'Problema', descricao: 'Descreva o problema' },
+        { numero: '3️⃣', titulo: 'Tipo de Solução', descricao: 'Mobile, site, sistema...' },
+        { numero: '4️⃣', titulo: 'Funcionalidades', descricao: 'Máximo 3 principais' },
+        { numero: '5️⃣', titulo: 'MVP', descricao: 'Versão mínima viável' },
+        { numero: '6️⃣', titulo: 'Demonstração Visual', descricao: 'Mostre como seria' },
+        { numero: '7️⃣', titulo: 'Público-Alvo', descricao: 'Para quem é o produto' },
+        { numero: '8️⃣', titulo: 'Modelo de Negócio', descricao: 'Como gerar receita' },
+        { numero: '9️⃣', titulo: 'Encerramento', descricao: 'Finalize com impacto' }
+      ];
+
+      const container = document.getElementById('etapasLista');
+      container.innerHTML = '';
+
+      etapas.forEach((etapa, index) => {
+        const etapaElement = document.createElement('div');
+        etapaElement.className = `etapa-item ${index === 0 ? 'ativa' : ''}`;
+        etapaElement.onclick = () => irParaEtapa(index + 1);
+        
+        etapaElement.innerHTML = `
+          <div class="etapa-numero">${index + 1}</div>
+          <div class="etapa-info">
+            <h3>${etapa.titulo}</h3>
+            <p>${etapa.descricao}</p>
+          </div>
+        `;
+
+        container.appendChild(etapaElement);
+      });
+
+      atualizarProgresso();
+    }
+
+    // ===== NAVEGAÇÃO =====
+    function avancarEtapa() {
+      if (etapaAtual < totalEtapas) {
+        // Validar etapa atual antes de avançar
+        if (validarEtapaAtual()) {
+          etapaAtual++;
+          mostrarEtapa(etapaAtual);
+          salvarDados();
+        }
+      }
+    }
+
+    function retrocederEtapa() {
+      if (etapaAtual > 1) {
+        etapaAtual--;
+        mostrarEtapa(etapaAtual);
+      }
+    }
+
+    function irParaEtapa(numero) {
+      etapaAtual = numero;
+      mostrarEtapa(etapaAtual);
+    }
+
+    function mostrarEtapa(numero) {
+      // Esconder todas as etapas
+      for (let i = 1; i <= totalEtapas; i++) {
+        const etapa = document.getElementById(`etapa${i}`);
+        if (etapa) {
+          etapa.classList.remove('ativa');
+        }
+      }
+
+      // Mostrar etapa atual
+      const etapaAtualElement = document.getElementById(`etapa${numero}`);
+      if (etapaAtualElement) {
+        etapaAtualElement.classList.add('ativa');
+      }
+
+      // Atualizar lista de etapas
+      document.querySelectorAll('.etapa-item').forEach((item, index) => {
+        item.classList.remove('ativa', 'completa');
+        if (index + 1 === numero) {
+          item.classList.add('ativa');
+        } else if (index + 1 < numero) {
+          item.classList.add('completa');
+        }
+      });
+
+      // Atualizar botões
+      atualizarBotoesNavegacao();
+      atualizarProgresso();
+      
+      // Mostrar mensagem de salvamento
+      mostrarMensagemSucesso();
+    }
+
+    function atualizarBotoesNavegacao() {
+      const btnAvancar = document.getElementById('btnAvancar');
+      const btnVoltar = document.getElementById('btnVoltar');
+      
+      if (etapaAtual === totalEtapas) {
+        btnAvancar.innerHTML = '<i class="fas fa-check"></i> Completo!';
+        btnAvancar.disabled = true;
+      } else {
+        btnAvancar.innerHTML = '<i class="fas fa-arrow-right"></i> Próxima Etapa';
+        btnAvancar.disabled = false;
+      }
+      
+      btnVoltar.style.display = etapaAtual > 1 ? 'block' : 'none';
+    }
+
+    function atualizarProgresso() {
+      const progresso = Math.round((etapaAtual / totalEtapas) * 100);
+      document.getElementById('progressoPorcentagem').textContent = `${progresso}%`;
+      document.getElementById('progressoFill').style.width = `${progresso}%`;
+    }
+
+    // ===== VALIDAÇÃO =====
+    function validarEtapaAtual() {
+      switch (etapaAtual) {
+        case 1:
+          const nome = document.getElementById('nomeSolucao').value.trim();
+          if (!nome) {
+            alert('Por favor, digite um nome para sua solução.');
+            return false;
+          }
+          break;
+          
+        case 2:
+          const problema = document.getElementById('problemaDescricao').value.trim();
+          if (!problema) {
+            alert('Por favor, descreva o problema que sua solução resolve.');
+            return false;
+          }
+          break;
+          
+        case 3:
+          if (!dadosPitch.tipoSolucao) {
+            alert('Por favor, selecione o tipo de solução tecnológica.');
+            return false;
+          }
+          break;
+          
+        case 4:
+          const funcs = dadosPitch.funcionalidades.filter(f => f.trim() !== '');
+          if (funcs.length === 0) {
+            alert('Por favor, adicione pelo menos uma funcionalidade.');
+            return false;
+          }
+          break;
+          
+        case 5:
+          const mvp = document.getElementById('mvpDescricao').value.trim();
+          if (!mvp) {
+            alert('Por favor, descreva o MVP (versão mínima viável).');
+            return false;
+          }
+          break;
+      }
+      return true;
+    }
+
+    // ===== FUNCIONALIDADES DO FORMULÁRIO =====
+    function inicializarFuncionalidades() {
+      // Inicializar 3 campos de funcionalidade
+      for (let i = 0; i < 3; i++) {
+        adicionarFuncionalidade();
+      }
+      
+      // Event listeners para atualização automática
+      document.getElementById('nomeSolucao').addEventListener('input', salvarDados);
+      document.getElementById('problemaDescricao').addEventListener('input', salvarDados);
+      document.getElementById('quemSofre').addEventListener('input', salvarDados);
+      document.getElementById('quandoAcontece').addEventListener('input', salvarDados);
+      document.getElementById('mvpDescricao').addEventListener('input', salvarDados);
+      document.getElementById('sloganFinal').addEventListener('input', salvarDados);
+      document.getElementById('publicoPersonalizado').addEventListener('input', salvarDados);
+      document.getElementById('detalhesNegocio').addEventListener('input', salvarDados);
+      document.getElementById('descricaoVisual').addEventListener('input', salvarDados);
+      document.getElementById('corPersonalizada').addEventListener('input', function() {
+        selecionarCor('personalizada', this.value);
+      });
+    }
+
+    function selecionarCor(tipo, valor) {
+      dadosPitch.corSelecionada = tipo;
+      dadosPitch.corPrimaria = valor;
+      
+      // Atualizar seleção visual
+      document.querySelectorAll('.cor-option').forEach(opt => {
+        opt.classList.remove('selecionada');
+      });
+      event.target.closest('.cor-option').classList.add('selecionada');
+      
+      // Mostrar/ocultar seletor personalizado
+      const seletorPersonalizado = document.getElementById('seletorPersonalizado');
+      if (tipo === 'personalizada') {
+        seletorPersonalizado.classList.remove('oculto');
+        document.getElementById('corPersonalizada').value = valor;
+        document.getElementById('corPersonalizadaPreview').style.background = valor;
+      } else {
+        seletorPersonalizado.classList.add('oculto');
+      }
+      
+      // Atualizar preview
+      atualizarPreview();
+      salvarDados();
+    }
+
+    function selecionarSolucao(tipo) {
+      dadosPitch.tipoSolucao = tipo;
+      
+      // Atualizar seleção visual
+      document.querySelectorAll('.solucao-option').forEach(opt => {
+        opt.classList.remove('selecionada');
+      });
+      event.target.closest('.solucao-option').classList.add('selecionada');
+      
+      salvarDados();
+    }
+
+    function adicionarFuncionalidade() {
+      const container = document.getElementById('funcionalidadesContainer');
+      const funcionalidades = container.querySelectorAll('.funcionalidade-item');
+      
+      // Limitar a 3 funcionalidades
+      if (funcionalidades.length >= 3) {
+        document.getElementById('avisoFuncionalidades').classList.remove('oculto');
+        return;
+      }
+      
+      const index = funcionalidades.length;
+      const item = document.createElement('div');
+      item.className = 'funcionalidade-item';
+      item.innerHTML = `
+        <input type="text" 
+               placeholder="Ex: O usuário pode criar tarefas com prazos" 
+               value="${dadosPitch.funcionalidades[index] || ''}"
+               oninput="atualizarFuncionalidade(${index}, this.value)">
+        <div class="remover-funcionalidade" onclick="removerFuncionalidade(this)">
+          <i class="fas fa-times"></i>
+        </div>
+      `;
+      
+      container.appendChild(item);
+      document.getElementById('avisoFuncionalidades').classList.add('oculto');
+      
+      // Focar no novo campo
+      const input = item.querySelector('input');
+      input.focus();
+    }
+
+    function atualizarFuncionalidade(index, valor) {
+      dadosPitch.funcionalidades[index] = valor;
+      salvarDados();
+      atualizarPreview();
+    }
+
+    function removerFuncionalidade(elemento) {
+      const item = elemento.closest('.funcionalidade-item');
+      const index = Array.from(item.parentNode.children).indexOf(item);
+      
+      // Remover do array
+      dadosPitch.funcionalidades.splice(index, 1);
+      dadosPitch.funcionalidades.push(''); // Manter array com 3 posições
+      
+      // Remover do DOM
+      item.remove();
+      
+      // Reindexar inputs restantes
+      const inputs = document.querySelectorAll('.funcionalidade-item input');
+      inputs.forEach((input, i) => {
+        input.setAttribute('oninput', `atualizarFuncionalidade(${i}, this.value)`);
+      });
+      
+      salvarDados();
+      atualizarPreview();
+      document.getElementById('avisoFuncionalidades').classList.add('oculto');
+    }
+
+    function atualizarUpload() {
+      const tipo = document.getElementById('tipoDemonstracao').value;
+      const uploadArea = document.getElementById('uploadArea');
+      const descricaoArea = document.getElementById('descricaoArea');
+      
+      if (tipo === 'imagem' || tipo === 'prototipo') {
+        uploadArea.classList.remove('oculto');
+        descricaoArea.classList.add('oculto');
+      } else if (tipo === 'descricao') {
+        uploadArea.classList.add('oculto');
+        descricaoArea.classList.remove('oculto');
+      } else {
+        uploadArea.classList.add('oculto');
+        descricaoArea.classList.add('oculto');
+      }
+      
+      dadosPitch.tipoDemonstracao = tipo;
+      salvarDados();
+    }
+
+    function previewImage(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      
+      // Validar tamanho (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        alert('A imagem deve ter no máximo 5MB.');
+        return;
+      }
+      
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const preview = document.getElementById('imagePreview');
+        preview.src = e.target.result;
+        preview.classList.add('ativa');
+        dadosPitch.imagemUrl = e.target.result;
+        salvarDados();
+        atualizarPreview();
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function selecionarPublico(tipo) {
+      dadosPitch.publicoAlvo = tipo;
+      
+      // Atualizar seleção visual
+      document.querySelectorAll('.publico-option').forEach(opt => {
+        opt.classList.remove('selecionada');
+      });
+      event.target.closest('.publico-option').classList.add('selecionada');
+      
+      salvarDados();
+    }
+
+    function selecionarModelo(tipo) {
+      dadosPitch.modeloNegocio = tipo;
+      
+      // Atualizar seleção visual
+      document.querySelectorAll('.modelo-option').forEach(opt => {
+        opt.classList.remove('selecionada');
+      });
+      event.target.closest('.modelo-option').classList.add('selecionada');
+      
+      salvarDados();
+    }
+
+    // ===== PREVIEW DINÂMICO =====
+    function atualizarPreview() {
+      // Atualizar cores
+      document.documentElement.style.setProperty('--preview-cor-primaria', dadosPitch.corPrimaria);
+      document.getElementById('previewHeader').style.borderBottomColor = dadosPitch.corPrimaria;
+      
+      // Atualizar conteúdo
+      document.getElementById('previewTitulo').textContent = 
+        document.getElementById('nomeSolucao').value || 'Nome da Solução';
+      
+      // Problema
+      const quem = document.getElementById('quemSofre').value || '[quem sofre]';
+      const quando = document.getElementById('quandoAcontece').value || '[quando acontece]';
+      const problema = document.getElementById('problemaDescricao').value || '[descrição do problema]';
+      document.getElementById('previewTextoProblema').innerHTML = `
+        <strong>Quem sofre:</strong> ${quem}<br>
+        <strong>Quando acontece:</strong> ${quando}<br><br>
+        ${problema}
+      `;
+      
+      // Solução
+      const tipoSolucaoText = {
+        'mobile': 'aplicativo mobile',
+        'site': 'site',
+        'sistema': 'sistema web',
+        'jogo': 'jogo',
+        'ia': 'solução com IA simples'
+      }[dadosPitch.tipoSolucao] || '[tipo de solução]';
+      
+      document.getElementById('previewTextoSolucao').textContent = 
+        `Para resolver esse problema, criamos um ${tipoSolucaoText}.`;
+      
+      // Funcionalidades
+      const listaFunc = document.getElementById('previewListaFuncionalidades');
+      listaFunc.innerHTML = '';
+      const funcsValidas = dadosPitch.funcionalidades.filter(f => f.trim() !== '');
+      if (funcsValidas.length > 0) {
+        funcsValidas.forEach(func => {
+          const li = document.createElement('li');
+          li.textContent = func;
+          listaFunc.appendChild(li);
+        });
+      } else {
+        const li = document.createElement('li');
+        li.textContent = '[Funcionalidades serão listadas aqui]';
+        listaFunc.appendChild(li);
+      }
+      
+      // MVP
+      document.getElementById('previewTextoMVP').textContent = 
+        document.getElementById('mvpDescricao').value || '[Descrição do MVP aparecerá aqui]';
+      
+      // Demonstração visual
+      const demoArea = document.getElementById('previewAreaImagem');
+      if (dadosPitch.imagemUrl) {
+        demoArea.innerHTML = `<img src="${dadosPitch.imagemUrl}" class="preview-imagem" alt="Demonstração do produto">`;
+      } else if (document.getElementById('descricaoVisual').value) {
+        demoArea.innerHTML = `<p>${document.getElementById('descricaoVisual').value}</p>`;
+      } else {
+        demoArea.innerHTML = '<p>[Demonstração visual aparecerá aqui]</p>';
+      }
+      
+      // Público-alvo
+      const publicoText = {
+        'estudantes': 'Estudantes',
+        'jovens': 'Jovens',
+        'professores': 'Professores',
+        'jogadores': 'Jogadores',
+        'negocios': 'Pequenos negócios',
+        'geral': 'Público em geral'
+      }[dadosPitch.publicoAlvo] || document.getElementById('publicoPersonalizado').value || '[público-alvo]';
+      
+      document.getElementById('previewTextoPublico').textContent = 
+        `Este produto é pensado principalmente para ${publicoText}.`;
+      
+      // Modelo de negócio
+      const modeloText = {
+        'gratuito': 'gratuito para os usuários',
+        'anuncios': 'gratuito com anúncios',
+        'assinatura': 'baseado em assinatura mensal/anual',
+        'premium': 'com versão gratuita e recursos premium pagos',
+        'parcerias': 'baseado em parcerias estratégicas'
+      }[dadosPitch.modeloNegocio] || '[modelo de negócio]';
+      
+      const detalhes = document.getElementById('detalhesNegocio').value;
+      document.getElementById('previewTextoNegocio').innerHTML = `
+        <strong>Modelo:</strong> O produto será ${modeloText}.<br><br>
+        ${detalhes ? `<strong>Detalhes:</strong> ${detalhes}` : ''}
+      `;
+      
+      // Slogan final
+      document.getElementById('previewSlogan').textContent = 
+        document.getElementById('sloganFinal').value || '[Slogan final aparecerá aqui]';
+    }
+
+    // ===== LOCAL STORAGE =====
+    function salvarDados() {
+      // Atualizar objeto dadosPitch
+      dadosPitch.nomeSolucao = document.getElementById('nomeSolucao').value;
+      dadosPitch.problema = document.getElementById('problemaDescricao').value;
+      dadosPitch.quemSofre = document.getElementById('quemSofre').value;
+      dadosPitch.quandoAcontece = document.getElementById('quandoAcontece').value;
+      dadosPitch.mvp = document.getElementById('mvpDescricao').value;
+      dadosPitch.descricaoVisual = document.getElementById('descricaoVisual').value;
+      dadosPitch.sloganFinal = document.getElementById('sloganFinal').value;
+      dadosPitch.detalhesNegocio = document.getElementById('detalhesNegocio').value;
+      
+      // Atualizar funcionalidades dos inputs
+      const inputs = document.querySelectorAll('.funcionalidade-item input');
+      inputs.forEach((input, index) => {
+        dadosPitch.funcionalidades[index] = input.value;
+      });
+      
+      // Salvar no localStorage
+      localStorage.setItem('pitchPerfeitoDados', JSON.stringify(dadosPitch));
+      
+      // Atualizar preview
+      atualizarPreview();
+    }
+
+    function carregarDadosSalvos() {
+      const dadosSalvos = localStorage.getItem('pitchPerfeitoDados');
+      if (dadosSalvos) {
+        dadosPitch = JSON.parse(dadosSalvos);
+        
+        // Preencher campos do formulário
+        document.getElementById('nomeSolucao').value = dadosPitch.nomeSolucao || '';
+        document.getElementById('problemaDescricao').value = dadosPitch.problema || '';
+        document.getElementById('quemSofre').value = dadosPitch.quemSofre || '';
+        document.getElementById('quandoAcontece').value = dadosPitch.quandoAcontece || '';
+        document.getElementById('mvpDescricao').value = dadosPitch.mvp || '';
+        document.getElementById('descricaoVisual').value = dadosPitch.descricaoVisual || '';
+        document.getElementById('sloganFinal').value = dadosPitch.sloganFinal || '';
+        document.getElementById('detalhesNegocio').value = dadosPitch.detalhesNegocio || '';
+        document.getElementById('publicoPersonalizado').value = 
+          dadosPitch.publicoAlvo && !['estudantes', 'jovens', 'professores', 'jogadores', 'negocios', 'geral'].includes(dadosPitch.publicoAlvo) 
+          ? dadosPitch.publicoAlvo : '';
+        
+        // Restaurar seleções
+        if (dadosPitch.corSelecionada) {
+          const corOption = document.querySelector(`.cor-option[onclick*="${dadosPitch.corSelecionada}"]`);
+          if (corOption) corOption.click();
+        }
+        
+        if (dadosPitch.tipoSolucao) {
+          const solucaoOption = document.querySelector(`.solucao-option[onclick*="${dadosPitch.tipoSolucao}"]`);
+          if (solucaoOption) solucaoOption.click();
+        }
+        
+        if (dadosPitch.publicoAlvo && ['estudantes', 'jovens', 'professores', 'jogadores', 'negocios', 'geral'].includes(dadosPitch.publicoAlvo)) {
+          const publicoOption = document.querySelector(`.publico-option[onclick*="${dadosPitch.publicoAlvo}"]`);
+          if (publicoOption) publicoOption.click();
+        }
+        
+        if (dadosPitch.modeloNegocio) {
+          const modeloOption = document.querySelector(`.modelo-option[onclick*="${dadosPitch.modeloNegocio}"]`);
+          if (modeloOption) modeloOption.click();
+        }
+        
+        // Atualizar tipo de demonstração
+        if (dadosPitch.tipoDemonstracao) {
+          document.getElementById('tipoDemonstracao').value = dadosPitch.tipoDemonstracao;
+          atualizarUpload();
+        }
+        
+        // Carregar imagem se existir
+        if (dadosPitch.imagemUrl) {
+          const preview = document.getElementById('imagePreview');
+          preview.src = dadosPitch.imagemUrl;
+          preview.classList.add('ativa');
+        }
+        
+        // Atualizar preview
+        atualizarPreview();
+        mostrarMensagemSucesso('Dados carregados com sucesso!');
+      }
+    }
+
+    function mostrarMensagemSucesso(texto = 'Progresso salvo automaticamente!') {
+      const mensagem = document.getElementById('mensagemSucesso');
+      mensagem.querySelector('span').textContent = texto;
+      mensagem.classList.remove('oculto');
+      
+      setTimeout(() => {
+        mensagem.classList.add('oculto');
+      }, 3000);
+    }
+
+    // ===== RESETAR PLANO =====
+    function resetarPlano() {
+      if (confirm('Tem certeza que deseja resetar todo o plano? Todos os dados serão perdidos.')) {
+        // Resetar dados
+        dadosPitch = {
+          nomeSolucao: '',
+          corPrimaria: '#3b82f6',
+          corSelecionada: 'azul',
+          problema: '',
+          quemSofre: '',
+          quandoAcontece: '',
+          tipoSolucao: '',
+          funcionalidades: ['', '', ''],
+          mvp: '',
+          tipoDemonstracao: '',
+          imagemUrl: '',
+          descricaoVisual: '',
+          publicoAlvo: '',
+          modeloNegocio: '',
+          detalhesNegocio: '',
+          sloganFinal: ''
+        };
+        
+        // Resetar formulário
+        document.getElementById('nomeSolucao').value = '';
+        document.getElementById('problemaDescricao').value = '';
+        document.getElementById('quemSofre').value = '';
+        document.getElementById('quandoAcontece').value = '';
+        document.getElementById('mvpDescricao').value = '';
+        document.getElementById('sloganFinal').value = '';
+        document.getElementById('publicoPersonalizado').value = '';
+        document.getElementById('detalhesNegocio').value = '';
+        document.getElementById('descricaoVisual').value = '';
+        document.getElementById('tipoDemonstracao').value = '';
+        document.getElementById('imagePreview').src = '';
+        document.getElementById('imagePreview').classList.remove('ativa');
+        
+        // Resetar seleções
+        document.querySelectorAll('.cor-option').forEach((opt, index) => {
+          opt.classList.remove('selecionada');
+          if (index === 0) opt.classList.add('selecionada');
+        });
+        
+        document.querySelectorAll('.solucao-option, .publico-option, .modelo-option').forEach(opt => {
+          opt.classList.remove('selecionada');
+        });
+        
+        // Resetar funcionalidades
+        const container = document.getElementById('funcionalidadesContainer');
+        container.innerHTML = '';
+        for (let i = 0; i < 3; i++) {
+          adicionarFuncionalidade();
+        }
+        
+        // Voltar para primeira etapa
+        etapaAtual = 1;
+        mostrarEtapa(1);
+        
+        // Limpar localStorage
+        localStorage.removeItem('pitchPerfeitoDados');
+        
+        // Mostrar mensagem
+        mostrarMensagemSucesso('Plano resetado com sucesso!');
+      }
+    }
+
+    // ===== EXPORTAÇÃO PDF =====
+    function abrirModalExportacao() {
+      document.getElementById('modalExportacao').style.display = 'flex';
+    }
+
+    function fecharModalExportacao() {
+      document.getElementById('modalExportacao').style.display = 'none';
+    }
+
+    function gerarPDF() {
+      const nomeArquivo = document.getElementById('nomeArquivo').value || 'pitch-empreendedor-tech';
+      const incluirPreview = document.getElementById('incluirPreview').checked;
+      const incluirDados = document.getElementById('incluirDados').checked;
+      const incluirTimestamp = document.getElementById('incluirTimestamp').checked;
+      
+      // Criar conteúdo do PDF
+      let conteudoPDF = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <meta charset="UTF-8">
+          <title>${dadosPitch.nomeSolucao || 'Pitch Empreendedor'}</title>
+          <style>
+            body { 
+              font-family: Arial, sans-serif; 
+              line-height: 1.6;
+              color: #333;
+              max-width: 800px;
+              margin: 0 auto;
+              padding: 40px;
+            }
+            h1 { 
+              color: ${dadosPitch.corPrimaria}; 
+              border-bottom: 3px solid ${dadosPitch.corPrimaria};
+              padding-bottom: 10px;
+            }
+            h2 { 
+              color: ${dadosPitch.corPrimaria}; 
+              margin-top: 30px;
+              border-left: 4px solid ${dadosPitch.corPrimaria};
+              padding-left: 15px;
+            }
+            .section { 
+              margin-bottom: 30px; 
+              padding: 20px;
+              background: #f9f9f9;
+              border-radius: 8px;
+            }
+            .info-label { 
+              font-weight: bold; 
+              color: #666;
+              margin-right: 10px;
+            }
+            .timestamp { 
+              text-align: center; 
+              color: #888;
+              font-size: 0.9em;
+              margin-top: 40px;
+              border-top: 1px solid #ddd;
+              padding-top: 20px;
+            }
+            ul { 
+              padding-left: 20px; 
+            }
+            li { 
+              margin-bottom: 10px; 
+            }
+          </style>
+        </head>
+        <body>
+          <h1>${dadosPitch.nomeSolucao || 'Nome da Solução'}</h1>
+          <p><em>Pitch Empreendedor - Empreender em Tecnologia: da Ideia ao Negócio</em></p>
+      `;
+      
+      // Adicionar preview se selecionado
+      if (incluirPreview) {
+        conteudoPDF += `
+          <div class="section">
+            <h2>📋 Resumo do Pitch</h2>
+            <p><span class="info-label">Problema:</span> ${dadosPitch.problema.substring(0, 150)}...</p>
+            <p><span class="info-label">Solução:</span> ${dadosPitch.tipoSolucao ? `Um(a) ${dadosPitch.tipoSolucao}` : 'Tipo de solução não definido'}</p>
+            <p><span class="info-label">Público-alvo:</span> ${dadosPitch.publicoAlvo || 'Não definido'}</p>
+            <p><span class="info-label">Modelo de negócio:</span> ${dadosPitch.modeloNegocio || 'Não definido'}</p>
+          </div>
+        `;
+      }
+      
+      // Adicionar todos os dados se selecionado
+      if (incluirDados) {
+        conteudoPDF += `
+          <div class="section">
+            <h2>1️⃣ Nome da Solução</h2>
+            <p><strong>${dadosPitch.nomeSolucao || 'Não definido'}</strong></p>
+            <p><span class="info-label">Cor principal:</span> <span style="color: ${dadosPitch.corPrimaria}">${dadosPitch.corPrimaria}</span></p>
+          </div>
+          
+          <div class="section">
+            <h2>2️⃣ Problema que Motivou a Ideia</h2>
+            <p><span class="info-label">Quem sofre:</span> ${dadosPitch.quemSofre || 'Não definido'}</p>
+            <p><span class="info-label">Quando acontece:</span> ${dadosPitch.quandoAcontece || 'Não definido'}</p>
+            <p>${dadosPitch.problema || 'Não definido'}</p>
+          </div>
+          
+          <div class="section">
+            <h2>3️⃣ Tipo de Solução Tecnológica</h2>
+            <p>${dadosPitch.tipoSolucao ? `Um(a) ${dadosPitch.tipoSolucao}` : 'Não definido'}</p>
+          </div>
+          
+          <div class="section">
+            <h2>4️⃣ Como a Solução Funciona</h2>
+            <ul>
+        `;
+        
+        const funcsValidas = dadosPitch.funcionalidades.filter(f => f.trim() !== '');
+        if (funcsValidas.length > 0) {
+          funcsValidas.forEach(func => {
+            conteudoPDF += `<li>${func}</li>`;
+          });
+        } else {
+          conteudoPDF += `<li>Nenhuma funcionalidade definida</li>`;
+        }
+        
+        conteudoPDF += `
+            </ul>
+          </div>
+          
+          <div class="section">
+            <h2>5️⃣ MVP — Primeira Versão</h2>
+            <p>${dadosPitch.mvp || 'Não definido'}</p>
+          </div>
+          
+          <div class="section">
+            <h2>6️⃣ Demonstração Visual</h2>
+            <p><span class="info-label">Tipo:</span> ${dadosPitch.tipoDemonstracao || 'Não definido'}</p>
+            ${dadosPitch.descricaoVisual ? `<p>${dadosPitch.descricaoVisual}</p>` : ''}
+            ${dadosPitch.imagemUrl ? `<p><em>Imagem anexada no aplicativo</em></p>` : ''}
+          </div>
+          
+          <div class="section">
+            <h2>7️⃣ Público-Alvo</h2>
+            <p>${dadosPitch.publicoAlvo || 'Não definido'}</p>
+          </div>
+          
+          <div class="section">
+            <h2>8️⃣ Ideia de Negócio</h2>
+            <p><span class="info-label">Modelo:</span> ${dadosPitch.modeloNegocio || 'Não definido'}</p>
+            <p>${dadosPitch.detalhesNegocio || 'Não definido'}</p>
+          </div>
+          
+          <div class="section">
+            <h2>9️⃣ Encerramento</h2>
+            <p><em>${dadosPitch.sloganFinal || 'Não definido'}</em></p>
+          </div>
+        `;
+      }
+      
+      // Adicionar timestamp se selecionado
+      if (incluirTimestamp) {
+        const agora = new Date();
+        const dataFormatada = agora.toLocaleDateString('pt-BR', {
+          day: '2-digit',
+          month: '2-digit',
+          year: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
+        });
+        
+        conteudoPDF += `
+          <div class="timestamp">
+            <p>Documento gerado em: ${dataFormatada}</p>
+            <p>Gerado com ❤️ usando Pitch Perfeito</p>
+          </div>
+        `;
+      }
+      
+      conteudoPDF += `
+        </body>
+        </html>
+      `;
+      
+      // Salvar dados atualizados antes de exportar
+      salvarDados();
+      
+      // Criar blob e link de download
+      const blob = new Blob([conteudoPDF], { type: 'text/html' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${nomeArquivo}.html`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      
+      // Fechar modal e mostrar mensagem
+      fecharModalExportacao();
+      mostrarMensagemSucesso('PDF exportado com sucesso! O arquivo foi baixado.');
+      
+      // Para uma implementação real de PDF, seria necessário usar uma biblioteca como jsPDF
+      // Esta versão exporta como HTML que pode ser convertido para PDF manualmente
+      // Em produção, você poderia usar: window.print() ou jsPDF library
+    }
+
+    // Fechar modal ao clicar fora
+    window.onclick = function(event) {
+      const modal = document.getElementById('modalExportacao');
+      if (event.target === modal) {
+        fecharModalExportacao();
+      }
+    };
+
+    // Permitir navegação por teclado
+    document.addEventListener('keydown', function(event) {
+      if (event.key === 'ArrowRight' && !event.target.matches('input, textarea')) {
+        avancarEtapa();
+      } else if (event.key === 'ArrowLeft' && !event.target.matches('input, textarea')) {
+        retrocederEtapa();
+      } else if (event.key === 'Escape') {
+        fecharModalExportacao();
+      }
+    });
+  </script>
+</body>
+</html>

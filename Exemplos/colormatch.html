@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>ColorMatch AR - Teste de Maquiagem</title>
+  <style>
+    body {
+      margin: 0;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      font-family: Arial, sans-serif;
+      text-align: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 500px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      margin: 20px 0;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }
+
+    .subtitle {
+      font-size: 1.1rem;
+      opacity: 0.9;
+      margin-bottom: 30px;
+    }
+
+    .face-container {
+      position: relative;
+      width: 300px;
+      height: 300px;
+      margin: 0 auto 30px;
+    }
+
+    .face {
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #f8d7b4, #e6bc94);
+      border-radius: 50%;
+      position: relative;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+      border: 8px solid rgba(255,255,255,0.1);
+    }
+
+    .eye {
+      position: absolute;
+      width: 40px;
+      height: 40px;
+      background: #2d3436;
+      border-radius: 50%;
+      top: 80px;
+    }
+
+    .eye.left { left: 80px; }
+    .eye.right { right: 80px; }
+
+    .nose {
+      position: absolute;
+      width: 20px;
+      height: 30px;
+      background: #e6b894;
+      border-radius: 10px;
+      top: 140px;
+      left: 140px;
+    }
+
+    .lips {
+      position: absolute;
+      width: 120px;
+      height: 60px;
+      background: #ff6b8b;
+      border-radius: 50%;
+      top: 200px;
+      left: 90px;
+      transition: all 0.3s ease;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+
+    .lips::after {
+      content: '';
+      position: absolute;
+      width: 100px;
+      height: 30px;
+      background: inherit;
+      border-radius: 50%;
+      top: 25px;
+      left: 10px;
+    }
+
+    .color-picker {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 15px;
+      margin: 30px 0;
+      padding: 20px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 20px;
+      backdrop-filter: blur(10px);
+    }
+
+    .color-option {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      cursor: pointer;
+      border: 3px solid transparent;
+      transition: all 0.3s ease;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+
+    .color-option:hover {
+      transform: scale(1.1);
+    }
+
+    .color-option.active {
+      border-color: white;
+      transform: scale(1.15);
+      box-shadow: 0 0 20px rgba(255,255,255,0.5);
+    }
+
+    .controls {
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+      margin-top: 30px;
+    }
+
+    button {
+      padding: 15px 30px;
+      font-size: 1rem;
+      border: none;
+      border-radius: 50px;
+      background: white;
+      color: #667eea;
+      cursor: pointer;
+      font-weight: bold;
+      transition: all 0.3s ease;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+    }
+
+    button:hover {
+      transform: translateY(-5px);
+      background: #f0f0f0;
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    .product-tag {
+      position: absolute;
+      background: rgba(255,255,255,0.95);
+      color: #333;
+      padding: 8px 15px;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      bottom: -20px;
+      left: 50%;
+      transform: translateX(-50%);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>💄 ColorMatch AR</h1>
+    <p class="subtitle">Teste maquiagem virtual em tempo real</p>
+    
+    <div class="face-container">
+      <div class="face">
+        <div class="eye left"></div>
+        <div class="eye right"></div>
+        <div class="nose"></div>
+        <div class="lips" id="lips"></div>
+      </div>
+      <div class="product-tag" id="productTag">Batom Rosa Clássico</div>
+    </div>
+
+    <div class="color-picker">
+      <div class="color-option active" style="background: #ff6b8b;" data-name="Batom Rosa Clássico"></div>
+      <div class="color-option" style="background: #d63031;" data-name="Vermelho Intenso"></div>
+      <div class="color-option" style="background: #fd79a8;" data-name="Rosa Vibrante"></div>
+      <div class="color-option" style="background: #6c5ce7;" data-name="Roxo Moderno"></div>
+      <div class="color-option" style="background: #00b894;" data-name="Verde Ousado"></div>
+      <div class="color-option" style="background: #fdcb6e;" data-name="Dourado Brilhante"></div>
+      <div class="color-option" style="background: #2d3436;" data-name="Preto Elegante"></div>
+      <div class="color-option" style="background: #a29bfe;" data-name="Lilás Suave"></div>
+    </div>
+
+    <div class="controls">
+      <button onclick="testFoundation()">🎨 Testar Base</button>
+      <button onclick="saveLook()">📸 Salvar Visual</button>
+      <button onclick="shareLook()">📤 Compartilhar</button>
+    </div>
+
+    <p style="margin-top: 30px; opacity: 0.8; font-size: 0.9rem;">
+      ⚡ MVP: Teste virtual de batom e base em tempo real
+    </p>
+  </div>
+
+  <script>
+    const lips = document.getElementById('lips');
+    const productTag = document.getElementById('productTag');
+    let currentSkinTone = '#f8d7b4';
+
+    // Color picker
+    document.querySelectorAll('.color-option').forEach(option => {
+      option.addEventListener('click', function() {
+        // Remove active class from all options
+        document.querySelectorAll('.color-option').forEach(opt => {
+          opt.classList.remove('active');
+        });
+        
+        // Add active class to clicked option
+        this.classList.add('active');
+        
+        // Apply color to lips
+        const color = this.style.backgroundColor;
+        lips.style.backgroundColor = color;
+        
+        // Update product name
+        const productName = this.getAttribute('data-name');
+        productTag.textContent = productName;
+        
+        // Add pulse animation
+        lips.style.animation = 'none';
+        setTimeout(() => {
+          lips.style.animation = 'pulse 0.5s';
+        }, 10);
+      });
+    });
+
+    function testFoundation() {
+      const skinTones = ['#f8d7b4', '#e6bc94', '#d4a574', '#c28e54', '#b07734'];
+      const face = document.querySelector('.face');
+      
+      // Find current tone index
+      const currentIndex = skinTones.indexOf(currentSkinTone);
+      const nextIndex = (currentIndex + 1) % skinTones.length;
+      
+      // Apply new tone
+      currentSkinTone = skinTones[nextIndex];
+      face.style.background = `linear-gradient(135deg, ${currentSkinTone}, ${darkenColor(currentSkinTone, 20)})`;
+      
+      // Show notification
+      showMessage(`Base aplicada! Tom ${nextIndex + 1}`);
+    }
+
+    function saveLook() {
+      showMessage('Visual salvo na galeria! 📸');
+      document.querySelector('h1').style.color = '#00b894';
+      setTimeout(() => {
+        document.querySelector('h1').style.color = 'white';
+      }, 1000);
+    }
+
+    function shareLook() {
+      showMessage('Link copiado! Compartilhe seu visual ✨');
+    }
+
+    function darkenColor(color, percent) {
+      // Simple color darkening for gradient
+      return color.replace(')', `, ${100 - percent}%)`).replace('rgb', 'rgba');
+    }
+
+    function showMessage(text) {
+      const message = document.createElement('div');
+      message.style.cssText = `
+        position: fixed;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: white;
+        color: #667eea;
+        padding: 15px 30px;
+        border-radius: 50px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        z-index: 1000;
+        font-weight: bold;
+        animation: slideDown 0.3s ease;
+      `;
+      message.textContent = text;
+      document.body.appendChild(message);
+      
+      setTimeout(() => {
+        message.style.animation = 'slideUp 0.3s ease';
+        setTimeout(() => message.remove(), 300);
+      }, 2000);
+      
+      // Add animation styles
+      if (!document.querySelector('#anim-styles')) {
+        const style = document.createElement('style');
+        style.id = 'anim-styles';
+        style.textContent = `
+          @keyframes slideDown {
+            from { transform: translateX(-50%) translateY(-100%); opacity: 0; }
+            to { transform: translateX(-50%) translateY(0); opacity: 1; }
+          }
+          @keyframes slideUp {
+            from { transform: translateX(-50%) translateY(0); opacity: 1; }
+            to { transform: translateX(-50%) translateY(-100%); opacity: 0; }
+          }
+          @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+          }
+        `;
+        document.head.appendChild(style);
+      }
+    }
+
+    // Initialize
+    lips.style.animation = 'pulse 0.5s';
+  </script>
+</body>
+</html>

@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>GameDesign Hub - Assets Colaborativos para Jogos</title>
+  <style>
+    body {
+      margin: 0;
+      background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+      color: white;
+      font-family: Arial, sans-serif;
+      text-align: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      margin: 20px 0;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }
+
+    .subtitle {
+      font-size: 1.1rem;
+      opacity: 0.9;
+      margin-bottom: 30px;
+    }
+
+    .stats {
+      display: flex;
+      justify-content: space-around;
+      margin: 30px 0;
+      padding: 20px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 20px;
+      backdrop-filter: blur(10px);
+    }
+
+    .stat-box {
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 2rem;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    .stat-label {
+      font-size: 0.9rem;
+      opacity: 0.8;
+    }
+
+    .search-bar {
+      margin: 30px 0;
+      padding: 15px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 50px;
+      display: flex;
+      gap: 10px;
+      backdrop-filter: blur(10px);
+    }
+
+    .search-input {
+      flex: 1;
+      padding: 15px 20px;
+      border: none;
+      border-radius: 25px;
+      font-size: 1rem;
+      background: rgba(255,255,255,0.9);
+      outline: none;
+    }
+
+    .search-btn {
+      padding: 15px 30px;
+      border: none;
+      border-radius: 25px;
+      background: white;
+      color: #11998e;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .search-btn:hover {
+      transform: translateY(-2px);
+      background: #f0f0f0;
+    }
+
+    .asset-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .asset-card {
+      background: rgba(255,255,255,0.15);
+      border-radius: 20px;
+      padding: 20px;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      backdrop-filter: blur(10px);
+      border: 2px solid transparent;
+    }
+
+    .asset-card:hover {
+      transform: translateY(-10px);
+      background: rgba(255,255,255,0.25);
+      border-color: rgba(255,255,255,0.5);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+    }
+
+    .asset-icon {
+      font-size: 3rem;
+      margin-bottom: 15px;
+      height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .asset-name {
+      font-weight: bold;
+      font-size: 1.1rem;
+      margin-bottom: 10px;
+    }
+
+    .asset-stats {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.8rem;
+      opacity: 0.8;
+    }
+
+    .preview-area {
+      background: rgba(255,255,255,0.1);
+      border-radius: 20px;
+      padding: 30px;
+      margin-bottom: 30px;
+      backdrop-filter: blur(10px);
+      min-height: 200px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+    }
+
+    .preview-icon {
+      font-size: 4rem;
+      margin-bottom: 20px;
+    }
+
+    .preview-text {
+      font-size: 1.2rem;
+      opacity: 0.9;
+    }
+
+    .controls {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      margin-top: 30px;
+    }
+
+    button {
+      padding: 15px 30px;
+      font-size: 1rem;
+      border: none;
+      border-radius: 50px;
+      background: white;
+      color: #11998e;
+      cursor: pointer;
+      font-weight: bold;
+      transition: all 0.3s ease;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    button:hover {
+      transform: translateY(-5px);
+      background: #f0f0f0;
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    .category-filter {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      margin: 20px 0;
+    }
+
+    .category-btn {
+      padding: 10px 20px;
+      background: rgba(255,255,255,0.1);
+      border: none;
+      border-radius: 20px;
+      color: white;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .category-btn:hover {
+      background: rgba(255,255,255,0.2);
+    }
+
+    .category-btn.active {
+      background: white;
+      color: #11998e;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🎮 GameDesign Hub</h1>
+    <p class="subtitle">Biblioteca colaborativa de assets para jogos</p>
+    
+    <div class="stats">
+      <div class="stat-box">
+        <div class="stat-value" id="totalAssets">2,847</div>
+        <div class="stat-label">Assets Disponíveis</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value" id="todayDownloads">142</div>
+        <div class="stat-label">Downloads Hoje</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value" id="activeUsers">89</div>
+        <div class="stat-label">Usuários Ativos</div>
+      </div>
+    </div>
+
+    <div class="search-bar">
+      <input type="text" class="search-input" placeholder="🔍 Buscar assets (personagens, cenários, efeitos...)" id="searchInput">
+      <button class="search-btn" onclick="searchAssets()">Buscar</button>
+    </div>
+
+    <div class="category-filter">
+      <button class="category-btn active" onclick="filterCategory('all')">Todos</button>
+      <button class="category-btn" onclick="filterCategory('characters')">Personagens</button>
+      <button class="category-btn" onclick="filterCategory('environments')">Cenários</button>
+      <button class="category-btn" onclick="filterCategory('ui')">UI</button>
+      <button class="category-btn" onclick="filterCategory('audio')">Áudio</button>
+      <button class="category-btn" onclick="filterCategory('effects')">Efeitos</button>
+    </div>
+
+    <div class="asset-grid" id="assetGrid">
+      <!-- Assets will be loaded here -->
+    </div>
+
+    <div class="preview-area" id="previewArea">
+      <div class="preview-icon" id="previewIcon">👾</div>
+      <div class="preview-text" id="previewText">Clique em um asset para visualizar</div>
+      <div id="previewDetails" style="margin-top: 10px; font-size: 0.9rem; opacity: 0.8;"></div>
+    </div>
+
+    <div class="controls">
+      <button onclick="uploadAsset()">📤 Upload Asset</button>
+      <button onclick="createProject()">🆕 Criar Projeto</button>
+      <button onclick="browse3D()">👁️ Visualizar 3D</button>
+    </div>
+
+    <p style="margin-top: 30px; opacity: 0.8; font-size: 0.9rem;">
+      ⚡ MVP: Biblioteca de assets colaborativos para jogos
+    </p>
+  </div>
+
+  <script>
+    const assets = [
+      { id: 1, name: "Guerreiro Espacial", icon: "👾", category: "characters", downloads: 1245, author: "Maria", format: "PNG", size: "2.4MB" },
+      { id: 2, name: "Floresta Encantada", icon: "🏞️", category: "environments", downloads: 892, author: "João", format: "JPG", size: "5.7MB" },
+      { id: 3, name: "Espada Luminosa", icon: "🗡️", category: "weapons", downloads: 567, author: "Ana", format: "PNG", size: "1.2MB" },
+      { id: 4, name: "Castelo Medieval", icon: "🏰", category: "environments", downloads: 734, author: "Pedro", format: "OBJ", size: "8.9MB" },
+      { id: 5, name: "Carro de Corrida", icon: "🚗", category: "vehicles", downloads: 432, author: "Carlos", format: "FBX", size: "6.3MB" },
+      { id: 6, name: "Interface Futurista", icon: "📱", category: "ui", downloads: 689, author: "Laura", format: "PSD", size: "3.1MB" },
+      { id: 7, name: "Efeito Mágico", icon: "✨", category: "effects", downloads: 321, author: "Você", format: "GIF", size: "1.8MB" },
+      { id: 8, name: "Trilha Épica", icon: "🎵", category: "audio", downloads: 456, author: "Beatriz", format: "MP3", size: "4.2MB" }
+    ];
+
+    let currentCategory = 'all';
+
+    function renderAssets(filteredAssets = assets) {
+      const assetGrid = document.getElementById('assetGrid');
+      assetGrid.innerHTML = '';
+      
+      filteredAssets.forEach(asset => {
+        const card = document.createElement('div');
+        card.className = 'asset-card';
+        card.innerHTML = `
+          <div class="asset-icon">${asset.icon}</div>
+          <div class="asset-name">${asset.name}</div>
+          <div class="asset-stats">
+            <div>⬇️ ${asset.downloads}</div>
+            <div>por ${asset.author}</div>
+          </div>
+        `;
+        
+        card.addEventListener('click', () => previewAsset(asset));
+        
+        assetGrid.appendChild(card);
+      });
+      
+      updateStats();
+    }
+
+    function previewAsset(asset) {
+      document.getElementById('previewIcon').textContent = asset.icon;
+      document.getElementById('previewText').textContent = asset.name;
+      document.getElementById('previewDetails').innerHTML = `
+        <div>Formato: ${asset.format} | Tamanho: ${asset.size}</div>
+        <div>Downloads: ${asset.downloads} | Autor: ${asset.author}</div>
+      `;
+      
+      showMessage(`🔍 Visualizando: ${asset.name}`);
+    }
+
+    function filterCategory(category) {
+      currentCategory = category;
+      
+      // Update category buttons
+      document.querySelectorAll('.category-btn').forEach(btn => {
+        btn.classList.remove('active');
+      });
+      event.target.classList.add('active');
+      
+      let filteredAssets;
+      if (category === 'all') {
+        filteredAssets = assets;
+      } else {
+        filteredAssets = assets.filter(asset => asset.category === category);
+      }
+      
+      renderAssets(filteredAssets);
+    }
+
+    function searchAssets() {
+      const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+      
+      if (!searchTerm) {
+        renderAssets(assets);
+        return;
+      }
+      
+      const filteredAssets = assets.filter(asset => 
+        asset.name.toLowerCase().includes(searchTerm) ||
+        asset.category.toLowerCase().includes(searchTerm) ||
+        asset.author.toLowerCase().includes(searchTerm)
+      );
+      
+      renderAssets(filteredAssets);
+      showMessage(`🔍 ${filteredAssets.length} assets encontrados para "${searchTerm}"`);
+    }
+
+    function uploadAsset() {
+      showMessage('📤 Selecione arquivos para upload (PNG, JPG, OBJ, FBX, MP3)');
+      
+      // Simulate adding a new asset
+      setTimeout(() => {
+        const newAssets = [
+          { name: "Robô Futurista", icon: "🤖", category: "characters", downloads: 1, author: "Você", format: "OBJ", size: "7.2MB" },
+          { name: "Som Laser", icon: "🔊", category: "audio", downloads: 1, author: "Você", format: "WAV", size: "2.1MB" }
+        ];
+        
+        const randomAsset = newAssets[Math.floor(Math.random() * newAssets.length)];
+        assets.push({ ...randomAsset, id: assets.length + 1 });
+        
+        renderAssets();
+        showMessage(`✅ Asset "${randomAsset.name}" adicionado com sucesso!`);
+      }, 1000);
+    }
+
+    function createProject() {
+      showMessage('🆕 Novo projeto criado! Comece a adicionar assets.');
+      
+      // Update stats
+      const todayDownloads = parseInt(document.getElementById('todayDownloads').textContent);
+      document.getElementById('todayDownloads').textContent = todayDownloads + 5;
+      
+      const activeUsers = parseInt(document.getElementById('activeUsers').textContent);
+      document.getElementById('activeUsers').textContent = activeUsers + 1;
+    }
+
+    function browse3D() {
+      showMessage('👁️ Abrindo visualizador 3D... Use o mouse para rotacionar e zoom.');
+      
+      // Change preview to show 3D view
+      document.getElementById('previewIcon').style.fontSize = '5rem';
+      document.getElementById('previewIcon').textContent = '🎮';
+      document.getElementById('previewText').textContent = 'Visualização 3D Ativa';
+      document.getElementById('previewDetails').innerHTML = `
+        <div>Use:</div>
+        <div>🖱️ Arraste para rotacionar</div>
+        <div>🔍 Scroll para zoom</div>
+      `;
+    }
+
+    function updateStats() {
+      document.getElementById('totalAssets').textContent = assets.length;
+      
+      const totalDownloads = assets.reduce((sum, asset) => sum + asset.downloads, 0);
+      document.getElementById('todayDownloads').textContent = Math.floor(totalDownloads / 20);
+    }
+
+    function showMessage(text) {
+      const message = document.createElement('div');
+      message.style.cssText = `
+        position: fixed;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: white;
+        color: #11998e;
+        padding: 15px 30px;
+        border-radius: 50px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        z-index: 1000;
+        font-weight: bold;
+        animation: slideDown 0.3s ease;
+      `;
+      message.textContent = text;
+      document.body.appendChild(message);
+      
+      setTimeout(() => {
+        message.style.animation = 'slideUp 0.3s ease';
+        setTimeout(() => message.remove(), 300);
+      }, 2000);
+    }
+
+    // Initialize
+    renderAssets();
+    
+    // Preview first asset
+    setTimeout(() => {
+      if (assets.length > 0) {
+        previewAsset(assets[0]);
+      }
+    }, 100);
+
+    // Add animation styles
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes slideDown {
+        from { transform: translateX(-50%) translateY(-100%); opacity: 0; }
+        to { transform: translateX(-50%) translateY(0); opacity: 1; }
+      }
+      @keyframes slideUp {
+        from { transform: translateX(-50%) translateY(0); opacity: 1; }
+        to { transform: translateX(-50%) translateY(-100%); opacity: 0; }
+      }
+    `;
+    document.head.appendChild(style);
+
+    // Search on Enter key
+    document.getElementById('searchInput').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        searchAssets();
+      }
+    });
+  </script>
+</body>
+</html>

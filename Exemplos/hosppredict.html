@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>HospPredict AI - Previsão de Internação</title>
+  <style>
+    body {
+      margin: 0;
+      background: linear-gradient(135deg, #0f4c75 0%, #3282b8 100%);
+      color: white;
+      font-family: Arial, sans-serif;
+      text-align: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      margin: 20px 0;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }
+
+    .subtitle {
+      font-size: 1.1rem;
+      opacity: 0.9;
+      margin-bottom: 30px;
+    }
+
+    .dashboard {
+      display: flex;
+      gap: 30px;
+      margin-bottom: 30px;
+    }
+
+    .patient-list {
+      flex: 1;
+      background: rgba(255,255,255,0.1);
+      border-radius: 20px;
+      padding: 20px;
+      backdrop-filter: blur(10px);
+      max-height: 400px;
+      overflow-y: auto;
+    }
+
+    .prediction-area {
+      flex: 1;
+      background: rgba(255,255,255,0.1);
+      border-radius: 20px;
+      padding: 30px;
+      backdrop-filter: blur(10px);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .patient {
+      background: rgba(255,255,255,0.15);
+      padding: 15px;
+      margin-bottom: 15px;
+      border-radius: 15px;
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border-left: 4px solid;
+    }
+
+    .patient:hover {
+      transform: translateX(10px);
+      background: rgba(255,255,255,0.2);
+    }
+
+    .patient.high { border-left-color: #ff6b6b; }
+    .patient.medium { border-left-color: #ffd93d; }
+    .patient.low { border-left-color: #6bcf7f; }
+
+    .patient-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .patient-name {
+      font-weight: bold;
+      font-size: 1.1rem;
+    }
+
+    .prediction-days {
+      font-size: 1.3rem;
+      font-weight: bold;
+      background: rgba(255,255,255,0.2);
+      padding: 5px 15px;
+      border-radius: 20px;
+    }
+
+    .patient-info {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.9rem;
+      opacity: 0.8;
+    }
+
+    .chart {
+      width: 200px;
+      height: 200px;
+      margin: 20px auto;
+      position: relative;
+    }
+
+    .chart-inner {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+    }
+
+    .accuracy {
+      font-size: 2.5rem;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    .controls {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      margin-top: 30px;
+    }
+
+    button {
+      padding: 15px 30px;
+      font-size: 1rem;
+      border: none;
+      border-radius: 50px;
+      background: white;
+      color: #0f4c75;
+      cursor: pointer;
+      font-weight: bold;
+      transition: all 0.3s ease;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    button:hover {
+      transform: translateY(-5px);
+      background: #f0f0f0;
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    .stats {
+      display: flex;
+      justify-content: space-around;
+      margin: 30px 0;
+      padding: 20px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 20px;
+      backdrop-filter: blur(10px);
+    }
+
+    .stat-box {
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 2rem;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    .stat-label {
+      font-size: 0.9rem;
+      opacity: 0.8;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🏥 HospPredict AI</h1>
+    <p class="subtitle">Previsão inteligente de tempo de internação</p>
+    
+    <div class="stats">
+      <div class="stat-box">
+        <div class="stat-value" id="totalPatients">24</div>
+        <div class="stat-label">Pacientes Ativos</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value" id="avgStay">5.2</div>
+        <div class="stat-label">Dias Médios</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value" id="accuracy">92.3%</div>
+        <div class="stat-label">Precisão IA</div>
+      </div>
+    </div>
+
+    <div class="dashboard">
+      <div class="patient-list" id="patientList">
+        <!-- Patients will be loaded here -->
+      </div>
+      
+      <div class="prediction-area">
+        <h3>📊 Previsão IA</h3>
+        <div class="chart" id="predictionChart">
+          <svg width="200" height="200" viewBox="0 0 200 200">
+            <circle cx="100" cy="100" r="80" fill="transparent" stroke="#1b5e8a" stroke-width="40"/>
+            <circle cx="100" cy="100" r="80" fill="transparent" stroke="#4fc3f7" stroke-width="40" 
+                    stroke-dasharray="502.4" stroke-dashoffset="40" stroke-linecap="round"/>
+          </svg>
+          <div class="chart-inner">
+            <div class="accuracy">92.3%</div>
+            <div>precisão</div>
+          </div>
+        </div>
+        <div style="margin-top: 20px;">
+          <div style="font-size: 0.9rem; opacity: 0.8;">Tempo previsto para paciente selecionado:</div>
+          <div id="selectedPrediction" style="font-size: 2rem; font-weight: bold; margin: 10px 0;">-</div>
+          <div id="predictionConfidence" style="font-size: 0.9rem; opacity: 0.8;">Selecione um paciente</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="controls">
+      <button onclick="addPatient()">➕ Novo Paciente</button>
+      <button onclick="runPrediction()">🤖 Executar IA</button>
+      <button onclick="exportReport()">📄 Exportar</button>
+    </div>
+
+    <p style="margin-top: 30px; opacity: 0.8; font-size: 0.9rem;">
+      ⚡ MVP: Previsão básica usando dados clínicos simples
+    </p>
+  </div>
+
+  <script>
+    let patients = [
+      { id: 1, name: "Maria Silva", age: 68, condition: "Pneumonia", priority: "high", prediction: 7, confidence: "Alta" },
+      { id: 2, name: "João Santos", age: 45, condition: "Fratura de Fêmur", priority: "medium", prediction: 10, confidence: "Média" },
+      { id: 3, name: "Ana Costa", age: 32, condition: "Apêndicite", priority: "medium", prediction: 3, confidence: "Alta" },
+      { id: 4, name: "Pedro Alves", age: 55, condition: "Infarto", priority: "high", prediction: 14, confidence: "Média" },
+      { id: 5, name: "Carla Mendes", age: 28, condition: "Gastroenterite", priority: "low", prediction: 2, confidence: "Alta" }
+    ];
+
+    let selectedPatient = null;
+
+    function renderPatients() {
+      const patientList = document.getElementById('patientList');
+      patientList.innerHTML = '';
+      
+      patients.forEach(patient => {
+        const div = document.createElement('div');
+        div.className = `patient ${patient.priority}`;
+        div.innerHTML = `
+          <div class="patient-header">
+            <div class="patient-name">${patient.name}</div>
+            <div class="prediction-days">${patient.prediction} dias</div>
+          </div>
+          <div class="patient-info">
+            <div>${patient.age} anos</div>
+            <div>${patient.condition}</div>
+            <div>${patient.priority === 'high' ? '🟥 Alta' : patient.priority === 'medium' ? '🟨 Média' : '🟩 Baixa'}</div>
+          </div>
+        `;
+        
+        div.addEventListener('click', () => selectPatient(patient));
+        
+        patientList.appendChild(div);
+      });
+      
+      updateStats();
+    }
+
+    function selectPatient(patient) {
+      selectedPatient = patient;
+      
+      // Highlight selected patient
+      document.querySelectorAll('.patient').forEach(p => {
+        p.style.background = 'rgba(255,255,255,0.15)';
+      });
+      event.currentTarget.style.background = 'rgba(255,255,255,0.3)';
+      
+      // Update prediction display
+      document.getElementById('selectedPrediction').textContent = `${patient.prediction} dias`;
+      document.getElementById('predictionConfidence').textContent = `Confiança: ${patient.confidence}`;
+      
+      showMessage(`Paciente ${patient.name} selecionado`);
+    }
+
+    function addPatient() {
+      const names = ["Roberto Lima", "Fernanda Rocha", "Lucas Nogueira", "Beatriz Souza"];
+      const conditions = ["Hipertensão", "Diabetes", "Asma", "Bronquite", "Hérnia"];
+      const priorities = ["high", "medium", "low"];
+      const confidences = ["Alta", "Média"];
+      
+      const newPatient = {
+        id: patients.length + 1,
+        name: names[Math.floor(Math.random() * names.length)],
+        age: Math.floor(Math.random() * 50) + 20,
+        condition: conditions[Math.floor(Math.random() * conditions.length)],
+        priority: priorities[Math.floor(Math.random() * priorities.length)],
+        prediction: Math.floor(Math.random() * 14) + 1,
+        confidence: confidences[Math.floor(Math.random() * confidences.length)]
+      };
+      
+      patients.push(newPatient);
+      renderPatients();
+      showMessage(`Paciente ${newPatient.name} adicionado`);
+    }
+
+    function runPrediction() {
+      // Simulate AI processing
+      showMessage('🤖 IA processando dados...');
+      
+      setTimeout(() => {
+        // Update predictions randomly
+        patients.forEach(patient => {
+          const change = Math.floor(Math.random() * 3) - 1; // -1, 0, or 1
+          patient.prediction = Math.max(1, patient.prediction + change);
+          
+          // Improve accuracy
+          patient.confidence = Math.random() > 0.3 ? "Alta" : "Média";
+        });
+        
+        renderPatients();
+        
+        if (selectedPatient) {
+          selectPatient(selectedPatient);
+        }
+        
+        // Update accuracy
+        const accuracy = 90 + Math.floor(Math.random() * 5);
+        document.getElementById('accuracy').textContent = `${accuracy}%`;
+        
+        showMessage(`Previsões atualizadas! Precisão: ${accuracy}%`);
+      }, 1500);
+    }
+
+    function exportReport() {
+      showMessage('📄 Relatório exportado como PDF');
+    }
+
+    function updateStats() {
+      document.getElementById('totalPatients').textContent = patients.length;
+      
+      const totalDays = patients.reduce((sum, patient) => sum + patient.prediction, 0);
+      const avgStay = (totalDays / patients.length).toFixed(1);
+      document.getElementById('avgStay').textContent = avgStay;
+    }
+
+    function showMessage(text) {
+      const message = document.createElement('div');
+      message.style.cssText = `
+        position: fixed;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: white;
+        color: #0f4c75;
+        padding: 15px 30px;
+        border-radius: 50px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        z-index: 1000;
+        font-weight: bold;
+        animation: slideDown 0.3s ease;
+      `;
+      message.textContent = text;
+      document.body.appendChild(message);
+      
+      setTimeout(() => {
+        message.style.animation = 'slideUp 0.3s ease';
+        setTimeout(() => message.remove(), 300);
+      }, 2000);
+    }
+
+    // Initialize
+    renderPatients();
+    
+    // Select first patient
+    if (patients.length > 0) {
+      setTimeout(() => {
+        selectPatient(patients[0]);
+      }, 100);
+    }
+
+    // Add animation styles
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes slideDown {
+        from { transform: translateX(-50%) translateY(-100%); opacity: 0; }
+        to { transform: translateX(-50%) translateY(0); opacity: 1; }
+      }
+      @keyframes slideUp {
+        from { transform: translateX(-50%) translateY(0); opacity: 1; }
+        to { transform: translateX(-50%) translateY(-100%); opacity: 0; }
+      }
+    `;
+    document.head.appendChild(style);
+  </script>
+</body>
+</html>

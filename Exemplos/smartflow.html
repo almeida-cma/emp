@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>SmartFlow AI - Semáforos Inteligentes</title>
+  <style>
+    body {
+      margin: 0;
+      background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+      color: white;
+      font-family: Arial, sans-serif;
+      text-align: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      margin: 20px 0;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }
+
+    .subtitle {
+      font-size: 1.1rem;
+      opacity: 0.9;
+      margin-bottom: 30px;
+    }
+
+    .stats {
+      display: flex;
+      justify-content: space-around;
+      margin: 30px 0;
+      padding: 20px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 20px;
+      backdrop-filter: blur(10px);
+    }
+
+    .stat-box {
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 2.5rem;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    .stat-label {
+      font-size: 0.9rem;
+      opacity: 0.8;
+    }
+
+    .intersection {
+      width: 600px;
+      height: 400px;
+      margin: 0 auto 30px;
+      position: relative;
+      background: #2c3e50;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+    }
+
+    .road {
+      position: absolute;
+      background: #34495e;
+    }
+
+    .horizontal {
+      width: 100%;
+      height: 60px;
+      top: 170px;
+    }
+
+    .vertical {
+      width: 60px;
+      height: 100%;
+      left: 270px;
+    }
+
+    .traffic-light {
+      position: absolute;
+      width: 40px;
+      height: 120px;
+      background: #1a252f;
+      border-radius: 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 10px 0;
+      gap: 8px;
+      border: 2px solid #34495e;
+    }
+
+    .north { top: 20px; left: 280px; }
+    .south { bottom: 20px; left: 280px; }
+    .west { left: 200px; top: 140px; transform: rotate(-90deg); }
+    .east { right: 200px; top: 140px; transform: rotate(90deg); }
+
+    .light {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: #2c3e50;
+      transition: all 0.3s ease;
+    }
+
+    .light.red.active { background: #e74c3c; box-shadow: 0 0 20px #e74c3c; }
+    .light.yellow.active { background: #f1c40f; box-shadow: 0 0 20px #f1c40f; }
+    .light.green.active { background: #2ecc71; box-shadow: 0 0 20px #2ecc71; }
+
+    .car {
+      position: absolute;
+      width: 40px;
+      height: 70px;
+      background: #3498db;
+      border-radius: 5px;
+      transition: left 3s linear, top 3s linear;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: bold;
+      font-size: 0.8rem;
+      border: 2px solid rgba(255,255,255,0.2);
+    }
+
+    .car::after {
+      content: '🚗';
+      font-size: 1.2rem;
+      position: absolute;
+      top: -5px;
+    }
+
+    .controls {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      margin-top: 30px;
+    }
+
+    button {
+      padding: 15px 30px;
+      font-size: 1rem;
+      border: none;
+      border-radius: 50px;
+      background: white;
+      color: #2a5298;
+      cursor: pointer;
+      font-weight: bold;
+      transition: all 0.3s ease;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    button:hover {
+      transform: translateY(-5px);
+      background: #f0f0f0;
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    .traffic-status {
+      margin-top: 20px;
+      padding: 15px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 15px;
+      font-size: 0.9rem;
+      display: inline-block;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🚦 SmartFlow AI</h1>
+    <p class="subtitle">Controle inteligente de semáforos em tempo real</p>
+    
+    <div class="stats">
+      <div class="stat-box">
+        <div class="stat-value" id="vehicles">42</div>
+        <div class="stat-label">Veículos</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value" id="reduction">35%</div>
+        <div class="stat-label">Redução de tempo</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value" id="flow">92%</div>
+        <div class="stat-label">Fluxo otimizado</div>
+      </div>
+    </div>
+
+    <div class="intersection" id="intersection">
+      <!-- Roads and traffic lights will be added by JavaScript -->
+    </div>
+
+    <div class="traffic-status" id="trafficStatus">
+      🟢 Sistema ativo - Priorizando via principal
+    </div>
+
+    <div class="controls">
+      <button onclick="addTraffic()">🚗 Adicionar Tráfego</button>
+      <button onclick="optimizeAI()">🤖 Otimizar IA</button>
+      <button onclick="emergencyMode()">🚨 Emergência</button>
+    </div>
+
+    <p style="margin-top: 30px; opacity: 0.8; font-size: 0.9rem;">
+      ⚡ MVP: Controle inteligente de um único cruzamento
+    </p>
+  </div>
+
+  <script>
+    const intersection = document.getElementById('intersection');
+    let trafficPattern = 'vertical'; // 'vertical' or 'horizontal'
+    let vehicleCount = 42;
+
+    // Create roads
+    const roads = [
+      { className: 'road horizontal', style: 'top: 170px;' },
+      { className: 'road vertical', style: 'left: 270px;' }
+    ];
+
+    roads.forEach(road => {
+      const div = document.createElement('div');
+      div.className = road.className;
+      div.style.cssText = road.style;
+      intersection.appendChild(div);
+    });
+
+    // Create traffic lights
+    const lights = [
+      { id: 'north', position: 'north' },
+      { id: 'south', position: 'south' },
+      { id: 'west', position: 'west' },
+      { id: 'east', position: 'east' }
+    ];
+
+    lights.forEach(light => {
+      const div = document.createElement('div');
+      div.className = `traffic-light ${light.position}`;
+      div.innerHTML = `
+        <div class="light red" id="${light.id}-red"></div>
+        <div class="light yellow" id="${light.id}-yellow"></div>
+        <div class="light green" id="${light.id}-green"></div>
+      `;
+      intersection.appendChild(div);
+    });
+
+    // Initialize lights
+    updateLights();
+
+    // Create some initial cars
+    for (let i = 0; i < 8; i++) {
+      createCar();
+    }
+
+    function updateLights() {
+      // Clear all lights
+      document.querySelectorAll('.light').forEach(light => {
+        light.classList.remove('active');
+      });
+
+      if (trafficPattern === 'vertical') {
+        // North-South green, East-West red
+        document.getElementById('north-green').classList.add('active');
+        document.getElementById('south-green').classList.add('active');
+        document.getElementById('west-red').classList.add('active');
+        document.getElementById('east-red').classList.add('active');
+        document.getElementById('trafficStatus').textContent = '🟢 Priorizando via Norte-Sul';
+      } else {
+        // East-West green, North-South red
+        document.getElementById('east-green').classList.add('active');
+        document.getElementById('west-green').classList.add('active');
+        document.getElementById('north-red').classList.add('active');
+        document.getElementById('south-red').classList.add('active');
+        document.getElementById('trafficStatus').textContent = '🟢 Priorizando via Leste-Oeste';
+      }
+    }
+
+    function createCar() {
+      const car = document.createElement('div');
+      car.className = 'car';
+      car.style.top = `${Math.random() * 300 + 50}px`;
+      car.style.left = `${Math.random() * 500 + 50}px`;
+      
+      intersection.appendChild(car);
+      
+      // Animate car based on traffic pattern
+      animateCar(car);
+    }
+
+    function animateCar(car) {
+      setInterval(() => {
+        let top = parseInt(car.style.top);
+        let left = parseInt(car.style.left);
+        
+        if (trafficPattern === 'vertical') {
+          // Move vertically
+          top += 5;
+          if (top > 400) top = -70;
+          car.style.top = `${top}px`;
+        } else {
+          // Move horizontally
+          left += 5;
+          if (left > 600) left = -40;
+          car.style.left = `${left}px`;
+        }
+      }, 100);
+    }
+
+    function addTraffic() {
+      for (let i = 0; i < 5; i++) {
+        createCar();
+      }
+      vehicleCount += 5;
+      document.getElementById('vehicles').textContent = vehicleCount;
+      showMessage('5 veículos adicionados ao tráfego');
+    }
+
+    function optimizeAI() {
+      // Switch traffic pattern
+      trafficPattern = trafficPattern === 'vertical' ? 'horizontal' : 'vertical';
+      
+      // Update stats
+      const reduction = Math.floor(Math.random() * 10) + 30;
+      const flow = Math.floor(Math.random() * 5) + 90;
+      
+      document.getElementById('reduction').textContent = `${reduction}%`;
+      document.getElementById('flow').textContent = `${flow}%`;
+      
+      updateLights();
+      showMessage(`IA otimizada! Priorizando via ${trafficPattern === 'vertical' ? 'Norte-Sul' : 'Leste-Oeste'}`);
+    }
+
+    function emergencyMode() {
+      // Flash all yellow lights
+      document.querySelectorAll('.light').forEach(light => {
+        light.classList.remove('active');
+      });
+      
+      document.querySelectorAll('.light.yellow').forEach(yellow => {
+        yellow.classList.add('active');
+      });
+      
+      document.getElementById('trafficStatus').textContent = '🚨 MODO EMERGÊNCIA ATIVADO';
+      document.getElementById('trafficStatus').style.color = '#f1c40f';
+      
+      setTimeout(() => {
+        updateLights();
+        document.getElementById('trafficStatus').style.color = 'white';
+      }, 3000);
+      
+      showMessage('Modo emergência ativado por 3 segundos');
+    }
+
+    function showMessage(text) {
+      const message = document.createElement('div');
+      message.style.cssText = `
+        position: fixed;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: white;
+        color: #2a5298;
+        padding: 15px 30px;
+        border-radius: 50px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        z-index: 1000;
+        font-weight: bold;
+        animation: slideDown 0.3s ease;
+      `;
+      message.textContent = text;
+      document.body.appendChild(message);
+      
+      setTimeout(() => {
+        message.style.animation = 'slideUp 0.3s ease';
+        setTimeout(() => message.remove(), 300);
+      }, 2000);
+    }
+
+    // Add animation styles
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes slideDown {
+        from { transform: translateX(-50%) translateY(-100%); opacity: 0; }
+        to { transform: translateX(-50%) translateY(0); opacity: 1; }
+      }
+      @keyframes slideUp {
+        from { transform: translateX(-50%) translateY(0); opacity: 1; }
+        to { transform: translateX(-50%) translateY(-100%); opacity: 0; }
+      }
+    `;
+    document.head.appendChild(style);
+  </script>
+</body>
+</html>

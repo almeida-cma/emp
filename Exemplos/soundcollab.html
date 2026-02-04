@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>SoundCollab - Criação Colaborativa de Músicas</title>
+  <style>
+    body {
+      margin: 0;
+      background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+      color: white;
+      font-family: Arial, sans-serif;
+      text-align: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      margin: 20px 0;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }
+
+    .subtitle {
+      font-size: 1.1rem;
+      opacity: 0.9;
+      margin-bottom: 30px;
+    }
+
+    .studio {
+      background: rgba(255,255,255,0.1);
+      border-radius: 20px;
+      padding: 30px;
+      margin-bottom: 30px;
+      backdrop-filter: blur(10px);
+    }
+
+    .track {
+      background: rgba(255,255,255,0.15);
+      padding: 15px;
+      margin-bottom: 15px;
+      border-radius: 15px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .track:hover {
+      background: rgba(255,255,255,0.2);
+      transform: translateX(10px);
+    }
+
+    .track.active {
+      background: rgba(255,255,255,0.25);
+      border: 2px solid rgba(255,255,255,0.5);
+    }
+
+    .track-icon {
+      font-size: 1.5rem;
+      width: 50px;
+      height: 50px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .track-info {
+      flex: 1;
+      text-align: left;
+    }
+
+    .track-name {
+      font-weight: bold;
+      font-size: 1.1rem;
+      margin-bottom: 5px;
+    }
+
+    .track-artist {
+      font-size: 0.9rem;
+      opacity: 0.8;
+    }
+
+    .waveform {
+      height: 40px;
+      flex: 2;
+      background: rgba(255,255,255,0.1);
+      border-radius: 10px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .wave {
+      position: absolute;
+      height: 100%;
+      width: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+      animation: waveMove 2s linear infinite;
+    }
+
+    .track-controls {
+      display: flex;
+      gap: 10px;
+    }
+
+    .control-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: white;
+      color: #6a11cb;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 1.2rem;
+    }
+
+    .control-btn:hover {
+      transform: scale(1.1);
+      background: #f0f0f0;
+    }
+
+    .mixer {
+      display: flex;
+      gap: 20px;
+      margin: 30px 0;
+      padding: 20px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 15px;
+    }
+
+    .mixer-control {
+      flex: 1;
+    }
+
+    .mixer-label {
+      margin-bottom: 10px;
+      font-size: 0.9rem;
+      opacity: 0.8;
+    }
+
+    .slider {
+      width: 100%;
+      height: 10px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 5px;
+      outline: none;
+      -webkit-appearance: none;
+    }
+
+    .slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 25px;
+      height: 25px;
+      border-radius: 50%;
+      background: white;
+      cursor: pointer;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    }
+
+    .controls {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      margin-top: 30px;
+    }
+
+    button {
+      padding: 15px 30px;
+      font-size: 1rem;
+      border: none;
+      border-radius: 50px;
+      background: white;
+      color: #6a11cb;
+      cursor: pointer;
+      font-weight: bold;
+      transition: all 0.3s ease;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    button:hover {
+      transform: translateY(-5px);
+      background: #f0f0f0;
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    .collaborators {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    .collaborator {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🎵 SoundCollab</h1>
+    <p class="subtitle">Crie músicas colaborativamente em tempo real</p>
+    
+    <div class="studio">
+      <div id="trackList">
+        <!-- Tracks will be loaded here -->
+      </div>
+
+      <div class="mixer">
+        <div class="mixer-control">
+          <div class="mixer-label">Volume Master</div>
+          <input type="range" class="slider" id="volume" min="0" max="100" value="75">
+        </div>
+        <div class="mixer-control">
+          <div class="mixer-label">Tempo (BPM)</div>
+          <input type="range" class="slider" id="tempo" min="60" max="180" value="120">
+        </div>
+        <div class="mixer-control">
+          <div class="mixer-label">Balance</div>
+          <input type="range" class="slider" id="balance" min="0" max="100" value="50">
+        </div>
+      </div>
+
+      <div class="collaborators">
+        <div class="collaborator" title="Você">👤</div>
+        <div class="collaborator" title="Maria (Online)">👩</div>
+        <div class="collaborator" title="João (Online)">👨</div>
+        <div class="collaborator" title="Ana (Editando)">👩‍🎤</div>
+      </div>
+    </div>
+
+    <div class="controls">
+      <button onclick="addTrack()">➕ Nova Faixa</button>
+      <button onclick="playAll()">▶️ Reproduzir Tudo</button>
+      <button onclick="inviteCollaborator()">👥 Convidar</button>
+    </div>
+
+    <p style="margin-top: 30px; opacity: 0.8; font-size: 0.9rem;">
+      ⚡ MVP: Upload de áudio e sobreposição simples de faixas
+    </p>
+  </div>
+
+  <script>
+    let tracks = [
+      { id: 1, name: "Voz Principal", artist: "Você", icon: "🎤", color: "#ff6b8b", volume: 80 },
+      { id: 2, name: "Guitarra Solo", artist: "Maria", icon: "🎸", color: "#6c5ce7", volume: 65 },
+      { id: 3, name: "Baixo", artist: "João", icon: "🎸", color: "#00b894", volume: 70 },
+      { id: 4, name: "Bateria", artist: "Ana", icon: "🥁", color: "#fdcb6e", volume: 75 },
+      { id: 5, name: "Teclado", artist: "Você", icon: "🎹", color: "#fd79a8", volume: 60 }
+    ];
+
+    let isPlaying = false;
+    let currentTrack = null;
+
+    function renderTracks() {
+      const trackList = document.getElementById('trackList');
+      trackList.innerHTML = '';
+      
+      tracks.forEach(track => {
+        const trackDiv = document.createElement('div');
+        trackDiv.className = 'track';
+        if (currentTrack === track.id) {
+          trackDiv.classList.add('active');
+        }
+        
+        trackDiv.innerHTML = `
+          <div class="track-icon" style="background: ${track.color}20; color: ${track.color}">
+            ${track.icon}
+          </div>
+          <div class="track-info">
+            <div class="track-name">${track.name}</div>
+            <div class="track-artist">por ${track.artist}</div>
+          </div>
+          <div class="waveform">
+            <div class="wave"></div>
+          </div>
+          <div class="track-controls">
+            <div class="control-btn" onclick="toggleTrack(${track.id})">${currentTrack === track.id ? '⏸️' : '▶️'}</div>
+            <div class="control-btn" onclick="editTrack(${track.id})">✎</div>
+          </div>
+        `;
+        
+        trackList.appendChild(trackDiv);
+      });
+    }
+
+    function toggleTrack(trackId) {
+      if (currentTrack === trackId) {
+        currentTrack = null;
+        showMessage('⏸️ Música pausada');
+      } else {
+        currentTrack = trackId;
+        const track = tracks.find(t => t.id === trackId);
+        showMessage(`▶️ Tocando: ${track.name}`);
+      }
+      renderTracks();
+    }
+
+    function addTrack() {
+      const trackTypes = [
+        { name: "Violino", icon: "🎻", color: "#a29bfe" },
+        { name: "Saxofone", icon: "🎷", color: "#e17055" },
+        { name: "Sintetizador", icon: "🎛️", color: "#00cec9" },
+        { name: "Percussão", icon: "🎯", color: "#fdcb6e" }
+      ];
+      
+      const artists = ["Você", "Convidado", "Colaborador"];
+      const randomType = trackTypes[Math.floor(Math.random() * trackTypes.length)];
+      
+      const newTrack = {
+        id: tracks.length + 1,
+        name: randomType.name,
+        artist: artists[Math.floor(Math.random() * artists.length)],
+        icon: randomType.icon,
+        color: randomType.color,
+        volume: Math.floor(Math.random() * 30) + 50
+      };
+      
+      tracks.push(newTrack);
+      renderTracks();
+      showMessage(`🎵 Nova faixa "${newTrack.name}" adicionada`);
+    }
+
+    function playAll() {
+      if (isPlaying) {
+        isPlaying = false;
+        currentTrack = null;
+        showMessage('⏸️ Todas as faixas pausadas');
+      } else {
+        isPlaying = true;
+        showMessage('🎶 Reproduzindo todas as faixas...');
+        
+        // Simulate playing all tracks
+        let delay = 0;
+        tracks.forEach(track => {
+          setTimeout(() => {
+            currentTrack = track.id;
+            renderTracks();
+          }, delay);
+          delay += 300;
+        });
+        
+        setTimeout(() => {
+          isPlaying = false;
+          currentTrack = null;
+          renderTracks();
+        }, delay + 1000);
+      }
+      renderTracks();
+    }
+
+    function editTrack(trackId) {
+      const track = tracks.find(t => t.id === trackId);
+      showMessage(`✎ Editando faixa: ${track.name}`);
+      
+      // Simulate opening editor
+      document.getElementById('volume').value = track.volume;
+    }
+
+    function inviteCollaborator() {
+      showMessage('📋 Link de convite copiado: soundcollab.com/invite/abc123');
+      
+      // Add a new collaborator icon
+      const collaborators = document.querySelector('.collaborators');
+      const newCollab = document.createElement('div');
+      newCollab.className = 'collaborator';
+      newCollab.title = 'Novo Colaborador';
+      newCollab.textContent = '👤';
+      collaborators.appendChild(newCollab);
+    }
+
+    function showMessage(text) {
+      const message = document.createElement('div');
+      message.style.cssText = `
+        position: fixed;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: white;
+        color: #6a11cb;
+        padding: 15px 30px;
+        border-radius: 50px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        z-index: 1000;
+        font-weight: bold;
+        animation: slideDown 0.3s ease;
+      `;
+      message.textContent = text;
+      document.body.appendChild(message);
+      
+      setTimeout(() => {
+        message.style.animation = 'slideUp 0.3s ease';
+        setTimeout(() => message.remove(), 300);
+      }, 2000);
+    }
+
+    // Initialize
+    renderTracks();
+    
+    // Setup slider events
+    document.getElementById('volume').addEventListener('input', function() {
+      showMessage(`🔊 Volume: ${this.value}%`);
+    });
+    
+    document.getElementById('tempo').addEventListener('input', function() {
+      showMessage(`🎵 Tempo: ${this.value} BPM`);
+    });
+
+    // Add animation styles
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes slideDown {
+        from { transform: translateX(-50%) translateY(-100%); opacity: 0; }
+        to { transform: translateX(-50%) translateY(0); opacity: 1; }
+      }
+      @keyframes slideUp {
+        from { transform: translateX(-50%) translateY(0); opacity: 1; }
+        to { transform: translateX(-50%) translateY(-100%); opacity: 0; }
+      }
+      @keyframes waveMove {
+        0% { left: -100%; }
+        100% { left: 100%; }
+      }
+    `;
+    document.head.appendChild(style);
+  </script>
+</body>
+</html>

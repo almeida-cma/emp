@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>DroneDrop - Sistema de Entregas por Drones</title>
+  <style>
+    body {
+      margin: 0;
+      background: linear-gradient(135deg, #141e30 0%, #243b55 100%);
+      color: white;
+      font-family: Arial, sans-serif;
+      text-align: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      margin: 20px 0;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }
+
+    .subtitle {
+      font-size: 1.1rem;
+      opacity: 0.9;
+      margin-bottom: 30px;
+    }
+
+    .stats {
+      display: flex;
+      justify-content: space-around;
+      margin: 30px 0;
+      padding: 20px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 20px;
+      backdrop-filter: blur(10px);
+    }
+
+    .stat-box {
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 2rem;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    .stat-label {
+      font-size: 0.9rem;
+      opacity: 0.8;
+    }
+
+    .map-container {
+      height: 400px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 20px;
+      margin-bottom: 30px;
+      position: relative;
+      overflow: hidden;
+      border: 2px solid rgba(255,255,255,0.1);
+    }
+
+    .drop-point {
+      position: absolute;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #3498db, #2980b9);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: bold;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: 2px solid white;
+      box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+    }
+
+    .drop-point:hover {
+      transform: scale(1.1);
+      box-shadow: 0 0 20px rgba(52, 152, 219, 0.5);
+    }
+
+    .drone {
+      position: absolute;
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, #2c3e50, #34495e);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #3498db;
+      font-size: 1.5rem;
+      transition: all 2s linear;
+      border: 2px solid #3498db;
+      z-index: 10;
+    }
+
+    .route {
+      position: absolute;
+      background: rgba(52, 152, 219, 0.3);
+      border-radius: 5px;
+      transform-origin: 0 0;
+    }
+
+    .controls {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      margin-top: 30px;
+    }
+
+    button {
+      padding: 15px 30px;
+      font-size: 1rem;
+      border: none;
+      border-radius: 50px;
+      background: white;
+      color: #141e30;
+      cursor: pointer;
+      font-weight: bold;
+      transition: all 0.3s ease;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    button:hover {
+      transform: translateY(-5px);
+      background: #f0f0f0;
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    .delivery-list {
+      background: rgba(255,255,255,0.1);
+      border-radius: 20px;
+      padding: 20px;
+      margin-bottom: 30px;
+      backdrop-filter: blur(10px);
+    }
+
+    .delivery-item {
+      background: rgba(255,255,255,0.15);
+      padding: 15px;
+      margin-bottom: 10px;
+      border-radius: 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: all 0.3s ease;
+    }
+
+    .delivery-item:hover {
+      background: rgba(255,255,255,0.2);
+      transform: translateX(10px);
+    }
+
+    .status {
+      padding: 5px 15px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: bold;
+    }
+
+    .status.ongoing { background: rgba(241, 196, 15, 0.2); color: #f1c40f; }
+    .status.delivered { background: rgba(46, 204, 113, 0.2); color: #2ecc71; }
+    .status.pending { background: rgba(231, 76, 60, 0.2); color: #e74c3c; }
+
+    .drone-status {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-top: 20px;
+      flex-wrap: wrap;
+    }
+
+    .drone-indicator {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: rgba(46, 204, 113, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #2ecc71;
+      font-size: 1.5rem;
+      border: 2px solid #2ecc71;
+    }
+
+    .drone-indicator.offline {
+      background: rgba(231, 76, 60, 0.2);
+      color: #e74c3c;
+      border-color: #e74c3c;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🚁 DroneDrop</h1>
+    <p class="subtitle">Sistema de entregas automatizadas por drones</p>
+    
+    <div class="stats">
+      <div class="stat-box">
+        <div class="stat-value" id="activeDrones">8/10</div>
+        <div class="stat-label">Drones Ativos</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value" id="todayDeliveries">42</div>
+        <div class="stat-label">Entregas Hoje</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value" id="avgTime">18min</div>
+        <div class="stat-label">Tempo Médio</div>
+      </div>
+    </div>
+
+    <div class="map-container" id="map">
+      <!-- Map elements will be added by JavaScript -->
+    </div>
+
+    <div class="delivery-list">
+      <h3>📦 Entregas em Andamento</h3>
+      <div id="deliveryList">
+        <!-- Delivery items will be loaded here -->
+      </div>
+    </div>
+
+    <div class="drone-status" id="droneStatus">
+      <!-- Drone indicators will be loaded here -->
+    </div>
+
+    <div class="controls">
+      <button onclick="addDelivery()">➕ Nova Entrega</button>
+      <button onclick="optimizeRoutes()">🤖 Otimizar Rotas</button>
+      <button onclick="deployDrone()">🚁 Lançar Drone</button>
+    </div>
+
+    <p style="margin-top: 30px; opacity: 0.8; font-size: 0.9rem;">
+      ⚡ MVP: Entrega por drones em uma região limitada
+    </p>
+  </div>
+
+  <script>
+    const dropPoints = [
+      { id: 'A', x: 100, y: 100, name: 'Centro Comercial' },
+      { id: 'B', x: 300, y: 150, name: 'Parque Central' },
+      { id: 'C', x: 500, y: 200, name: 'Estação Norte' },
+      { id: 'D', x: 200, y: 300, name: 'Universidade' },
+      { id: 'E', x: 400, y: 350, name: 'Hospital' }
+    ];
+
+    let drones = [
+      { id: 1, x: 150, y: 120, target: 'B', battery: 85 },
+      { id: 2, x: 350, y: 180, target: 'D', battery: 72 },
+      { id: 3, x: 250, y: 250, target: null, battery: 90 }
+    ];
+
+    let deliveries = [
+      { id: 1, from: 'A', to: 'B', status: 'ongoing', drone: 1, time: '12min' },
+      { id: 2, from: 'C', to: 'E', status: 'ongoing', drone: 2, time: '18min' },
+      { id: 3, from: 'D', to: 'A', status: 'pending', drone: null, time: '--' }
+    ];
+
+    function initMap() {
+      const map = document.getElementById('map');
+      map.innerHTML = '';
+      
+      // Add drop points
+      dropPoints.forEach(point => {
+        const div = document.createElement('div');
+        div.className = 'drop-point';
+        div.id = `point-${point.id}`;
+        div.style.left = `${point.x}px`;
+        div.style.top = `${point.y}px`;
+        div.textContent = point.id;
+        div.title = point.name;
+        
+        div.addEventListener('click', () => selectPoint(point));
+        
+        map.appendChild(div);
+      });
+      
+      // Add drones
+      drones.forEach(drone => {
+        const div = document.createElement('div');
+        div.className = 'drone';
+        div.id = `drone-${drone.id}`;
+        div.style.left = `${drone.x}px`;
+        div.style.top = `${drone.y}px`;
+        div.textContent = '🚁';
+        div.title = `Drone #${drone.id} - Bateria: ${drone.battery}%`;
+        
+        map.appendChild(div);
+      });
+      
+      // Add routes
+      updateRoutes();
+      
+      // Update drone status indicators
+      updateDroneStatus();
+      
+      // Render delivery list
+      renderDeliveries();
+    }
+
+    function selectPoint(point) {
+      showMessage(`📍 Ponto ${point.id} selecionado: ${point.name}`);
+      
+      // Highlight the point
+      document.querySelectorAll('.drop-point').forEach(p => {
+        p.style.boxShadow = '0 5px 15px rgba(52, 152, 219, 0.3)';
+      });
+      document.getElementById(`point-${point.id}`).style.boxShadow = '0 0 20px rgba(52, 152, 219, 0.8)';
+      
+      setTimeout(() => {
+        document.getElementById(`point-${point.id}`).style.boxShadow = '0 5px 15px rgba(52, 152, 219, 0.3)';
+      }, 1000);
+    }
+
+    function updateRoutes() {
+      // Remove existing routes
+      document.querySelectorAll('.route').forEach(route => route.remove());
+      
+      // Add new routes
+      deliveries.filter(d => d.status === 'ongoing' && d.drone).forEach(delivery => {
+        const drone = drones.find(d => d.id === delivery.drone);
+        const fromPoint = dropPoints.find(p => p.id === delivery.from);
+        const toPoint = dropPoints.find(p => p.id === delivery.to);
+        
+        if (drone && fromPoint && toPoint) {
+          // Calculate route
+          const dx = toPoint.x - fromPoint.x;
+          const dy = toPoint.y - fromPoint.y;
+          const length = Math.sqrt(dx * dx + dy * dy);
+          const angle = Math.atan2(dy, dx) * 180 / Math.PI;
+          
+          const route = document.createElement('div');
+          route.className = 'route';
+          route.style.left = `${fromPoint.x + 20}px`;
+          route.style.top = `${fromPoint.y + 20}px`;
+          route.style.width = `${length}px`;
+          route.style.height = '5px';
+          route.style.transform = `rotate(${angle}deg)`;
+          
+          document.getElementById('map').appendChild(route);
+        }
+      });
+    }
+
+    function animateDrones() {
+      drones.forEach(drone => {
+        if (drone.target) {
+          const droneEl = document.getElementById(`drone-${drone.id}`);
+          const targetPoint = dropPoints.find(p => p.id === drone.target);
+          
+          if (targetPoint) {
+            // Move drone towards target
+            const dx = targetPoint.x - drone.x;
+            const dy = targetPoint.y - drone.y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            
+            if (distance > 10) {
+              drone.x += dx * 0.05;
+              drone.y += dy * 0.05;
+              
+              droneEl.style.left = `${drone.x}px`;
+              droneEl.style.top = `${drone.y}px`;
+              
+              // Reduce battery
+              drone.battery = Math.max(0, drone.battery - 0.1);
+              droneEl.title = `Drone #${drone.id} - Bateria: ${Math.round(drone.battery)}%`;
+              
+              // Update battery indicator
+              const indicator = document.querySelector(`.drone-indicator[data-id="${drone.id}"]`);
+              if (indicator) {
+                indicator.textContent = drone.battery < 20 ? '🪫' : '🚁';
+                if (drone.battery < 20) {
+                  indicator.classList.add('offline');
+                }
+              }
+            } else {
+              // Drone reached target
+              const delivery = deliveries.find(d => d.drone === drone.id && d.to === drone.target);
+              if (delivery) {
+                delivery.status = 'delivered';
+                drone.target = null;
+                renderDeliveries();
+                updateRoutes();
+                showMessage(`✅ Drone #${drone.id} entregou no ponto ${delivery.to}`);
+              }
+            }
+          }
+        }
+      });
+      
+      requestAnimationFrame(animateDrones);
+    }
+
+    function addDelivery() {
+      const fromPoints = dropPoints.filter(p => p.id !== 'E');
+      const toPoints = dropPoints.filter(p => p.id !== 'C');
+      
+      const from = fromPoints[Math.floor(Math.random() * fromPoints.length)];
+      const to = toPoints.filter(p => p.id !== from.id)[Math.floor(Math.random() * (toPoints.length - 1))];
+      
+      // Find available drone
+      const availableDrone = drones.find(d => !d.target && d.battery > 20);
+      
+      const newDelivery = {
+        id: deliveries.length + 1,
+        from: from.id,
+        to: to.id,
+        status: availableDrone ? 'ongoing' : 'pending',
+        drone: availableDrone ? availableDrone.id : null,
+        time: availableDrone ? `${Math.floor(Math.random() * 10) + 10}min` : '--'
+      };
+      
+      deliveries.push(newDelivery);
+      
+      if (availableDrone) {
+        availableDrone.target = to.id;
+      }
+      
+      // Update stats
+      document.getElementById('todayDeliveries').textContent = parseInt(document.getElementById('todayDeliveries').textContent) + 1;
+      
+      renderDeliveries();
+      updateRoutes();
+      showMessage(`📦 Nova entrega: ${from.name} → ${to.name}`);
+    }
+
+    function optimizeRoutes() {
+      showMessage('🤖 IA otimizando rotas...');
+      
+      setTimeout(() => {
+        // Simulate route optimization
+        const timeSavings = Math.floor(Math.random() * 10) + 5;
+        const currentTime = parseInt(document.getElementById('avgTime').textContent);
+        document.getElementById('avgTime').textContent = `${Math.max(5, currentTime - timeSavings)}min`;
+        
+        // Reassign drones more efficiently
+        deliveries.filter(d => d.status === 'pending').forEach(delivery => {
+          const availableDrone = drones.find(d => !d.target && d.battery > 20);
+          if (availableDrone) {
+            delivery.status = 'ongoing';
+            delivery.drone = availableDrone.id;
+            delivery.time = `${Math.floor(Math.random() * 10) + 10}min`;
+            availableDrone.target = delivery.to;
+          }
+        });
+        
+        renderDeliveries();
+        updateRoutes();
+        showMessage(`✅ Rotas otimizadas! Tempo reduzido em ${timeSavings} minutos`);
+      }, 1500);
+    }
+
+    function deployDrone() {
+      if (drones.length >= 10) {
+        showMessage('❌ Limite máximo de drones atingido (10)');
+        return;
+      }
+      
+      const newDrone = {
+        id: drones.length + 1,
+        x: 100,
+        y: 100,
+        target: null,
+        battery: 100
+      };
+      
+      drones.push(newDrone);
+      
+      document.getElementById('activeDrones').textContent = `${drones.filter(d => d.battery > 0).length}/10`;
+      
+      initMap();
+      showMessage(`🚁 Drone #${newDrone.id} lançado! Bateria: 100%`);
+    }
+
+    function renderDeliveries() {
+      const deliveryList = document.getElementById('deliveryList');
+      deliveryList.innerHTML = '';
+      
+      deliveries.forEach(delivery => {
+        const div = document.createElement('div');
+        div.className = 'delivery-item';
+        div.innerHTML = `
+          <div>
+            <strong>${delivery.from} → ${delivery.to}</strong>
+            <div style="font-size: 0.8rem; opacity: 0.8; margin-top: 5px;">
+              ${delivery.drone ? `Drone #${delivery.drone}` : 'Aguardando drone'}
+            </div>
+          </div>
+          <div style="text-align: right;">
+            <div class="status ${delivery.status}">
+              ${delivery.status === 'ongoing' ? '🟡 Em andamento' : 
+                delivery.status === 'delivered' ? '🟢 Entregue' : '🔴 Pendente'}
+            </div>
+            <div style="font-size: 0.9rem; margin-top: 5px;">${delivery.time}</div>
+          </div>
+        `;
+        
+        deliveryList.appendChild(div);
+      });
+    }
+
+    function updateDroneStatus() {
+      const droneStatus = document.getElementById('droneStatus');
+      droneStatus.innerHTML = '';
+      
+      drones.forEach(drone => {
+        const indicator = document.createElement('div');
+        indicator.className = `drone-indicator ${drone.battery < 20 ? 'offline' : ''}`;
+        indicator.setAttribute('data-id', drone.id);
+        indicator.textContent = drone.battery < 20 ? '🪫' : '🚁';
+        indicator.title = `Drone #${drone.id} - ${drone.battery}% bateria`;
+        droneStatus.appendChild(indicator);
+      });
+    }
+
+    function showMessage(text) {
+      const message = document.createElement('div');
+      message.style.cssText = `
+        position: fixed;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: white;
+        color: #141e30;
+        padding: 15px 30px;
+        border-radius: 50px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        z-index: 1000;
+        font-weight: bold;
+        animation: slideDown 0.3s ease;
+      `;
+      message.textContent = text;
+      document.body.appendChild(message);
+      
+      setTimeout(() => {
+        message.style.animation = 'slideUp 0.3s ease';
+        setTimeout(() => message.remove(), 300);
+      }, 2000);
+    }
+
+    // Initialize
+    initMap();
+    animateDrones();
+    
+    // Add animation styles
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes slideDown {
+        from { transform: translateX(-50%) translateY(-100%); opacity: 0; }
+        to { transform: translateX(-50%) translateY(0); opacity: 1; }
+      }
+      @keyframes slideUp {
+        from { transform: translateX(-50%) translateY(0); opacity: 1; }
+        to { transform: translateX(-50%) translateY(-100%); opacity: 0; }
+      }
+    `;
+    document.head.appendChild(style);
+  </script>
+</body>
+</html>
